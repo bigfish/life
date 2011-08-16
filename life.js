@@ -14,6 +14,7 @@
                 cells[r][c] = 0;
             }
         }
+        clear();
     }
 
     function applyRule(cell, neighbours) {
@@ -125,12 +126,15 @@
             timer = setInterval(iterate, 1000 / 30);
         },
 
+        step: iterate,
+
         stop: function () {
             if (timer) {
                 clearInterval(timer);
                 timer = null;
             }
-        }
+        },
+        reset: reset
     };
 
 

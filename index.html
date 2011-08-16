@@ -21,6 +21,17 @@
         height: 700px;
         width: 100%;
       }
+      #controls {
+        margin-bottom: 5px;
+        text-align: right;
+      }
+      #controls a, #controls a:visited {
+        text-decoration:none;
+        color: yellow;
+      }
+      #controls a:active {
+        color: red;
+      }
 
     </style>
   </head>
@@ -28,8 +39,14 @@
     <table width="100%" height="100%">
       <tr>
         <td width="600" height="600">
+            <div id="controls" >
+              <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
+              <a href="#" onclick="LIFE.start();return false" >START</a>&nbsp;
+              <a href="#" onclick="LIFE.step();return false" >STEP</a>&nbsp;
+              <a href="#" onclick="LIFE.reset();return false" >RESET</a>&nbsp;
+              <a href="#" onclick="LIFE.seed();return false" >RANDOM</a>&nbsp;
+            </div>
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-
             <script src="life.js" ></script>
             <script>
               LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
