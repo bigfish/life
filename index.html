@@ -30,10 +30,12 @@
         <td width="600" height="600">
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
 
-    <script src="life.js" ></script>
-    <script>
-      LIFE("canvas", 600, 600, "#000000", "#00FF00", 4);
-    </script>
+            <script src="life.js" ></script>
+            <script>
+              LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
+              LIFE.seed();
+              LIFE.start();
+            </script>
         </td>
         <td>
           <iframe id="lexicon" src="lexicon/lexicon.htm">
