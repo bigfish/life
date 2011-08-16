@@ -1,0 +1,17 @@
+/* modifed from the original for display in life web app */
+BODY {
+  	color:#CCC;
+	background-color: black;
+	font-family:Verdana,Arial,Helvetica,sans-serif;
+	font-size: 0.8em;
+}
+A:link { color:#00CCFF;text-decoration: none }
+A:visited { color:#3366FF }
+A:active { color:#FF0000;text-decoration:underline }
+HR { color:#FFFFFF }
+H1 { text-align:center; font-size:x-large }
+.b { font-weight:bold }
+.g { color:#0ff }
+.l { font-family: Courier, monospace ;
+     color:#0FF; font-size: x-large }
+.z { text-align:center; font-size:smaller }

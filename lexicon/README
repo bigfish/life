@@ -1,0 +1,18 @@
+This zip file contains the single-page HTML version of release 25 of
+the Life Lexicon, a lexicon of terms used in Conway's Game of Life.
+
+The files herein are:
+
+  README        (this file)
+  lexicon.htm   (the no-frames HTML version of the Lexicon)
+  lexiconf.htm  (the frames version of the Lexicon)
+  buttons.htm   (top bar for the frames version)
+  lifelex.css   (the stylesheet)
+
+Note that on some browsers (e.g., Netscape 6.01) the frames version is
+incredibly slow.  If you do not want to use the frames version, then
+lexiconf.htm and buttons.htm can be deleted.
+
+Stephen Silver
+life(at)argentum.freeserve.co.uk
+Life Lexicon Home Page: http://www.argentum.freeserve.co.uk/lex_home.htm

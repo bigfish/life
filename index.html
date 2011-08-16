@@ -3,12 +3,44 @@
   <head>
     <meta charset="utf-8">
     <title>LIFE: The Game</title>
+    <style>
+      body {
+        color:#CCC;
+        background-color: black;
+        font-family:Verdana,Arial,Helvetica,sans-serif;
+        font-size: 0.8em;
+      }
+      h1,h2,h3 {
+        text-align:center;
+      }
+      #game {
+        float: left;
+      }
+      #lexicon {
+        border: 0;
+        height: 700px;
+        width: 100%;
+      }
+
+    </style>
   </head>
-  <body style="margin:0;padding:0;background: black">
-    <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+  <body >
+    <table width="100%" height="100%">
+      <tr>
+        <td width="600" height="600">
+            <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+
     <script src="life.js" ></script>
     <script>
-      LIFE("canvas", 800, 600, "#000000", "#00FF00", 4);
+      LIFE("canvas", 600, 600, "#000000", "#00FF00", 4);
     </script>
+        </td>
+        <td>
+          <iframe id="lexicon" src="lexicon/lexicon.htm">
+        </td>
+      </tr>
+    </table>
+    
+    
   </body>
 </html>
