@@ -18,44 +18,58 @@
       }
       #lexicon {
         border: 0;
-        height: 700px;
-        width: 100%;
+        margin: 0;
+        height: 600px;
       }
       #controls {
         margin-bottom: 5px;
         text-align: right;
       }
-      #controls a, #controls a:visited {
+      #controls a, #controls a:visited, a.button {
         text-decoration:none;
         color: yellow;
       }
-      #controls a:active {
+      #controls a:active, a.button:active {
         color: red;
+      }
+      #seed_form #seed_text {
+        background-color: black;
+        color: white;
+        font-family: Courier, monospace;
       }
 
     </style>
   </head>
   <body >
-    <table width="100%" height="100%">
+    <table width="100%" height="100%" cellpadding=5>
       <tr>
-        <td width="600" height="600">
+        <td width="600" height="600" valign="top">
             <div id="controls" >
               <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
               <a href="#" onclick="LIFE.start();return false" >START</a>&nbsp;
               <a href="#" onclick="LIFE.step();return false" >STEP</a>&nbsp;
               <a href="#" onclick="LIFE.reset();return false" >RESET</a>&nbsp;
-              <a href="#" onclick="LIFE.seed();return false" >RANDOM</a>&nbsp;
+              <a href="#" onclick="LIFE.random_seed();return false" >RANDOM</a>&nbsp;
             </div>
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
             <script src="life.js" ></script>
             <script>
               LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
-              LIFE.seed();
-              LIFE.start();
+              //LIFE.random_seed();
+              //LIFE.start();
             </script>
         </td>
-        <td>
-          <iframe id="lexicon" src="lexicon/lexicon.htm">
+        <td valign="top">
+          <form id="seed_form">
+              <a class="button"  href="#" onclick="LIFE.insert_seed(document.getElementById('seed_text').value)">INSERT SEED:</a>
+              <textarea id="seed_text" rows="40" cols="48" ></textarea>
+              <p>Enter seed pattern of . and O (capital 'o') manually, or copy and paste examples 
+              from the lexicon. Then click 'INSERT SEED', and 'START'. Whitespace will be ignored.</p>
+
+          </form>
+        </td>
+        <td width="100%" valign="top">
+          <iframe width="100%" id="lexicon" src="lexicon/lexicon.htm">
         </td>
       </tr>
     </table>

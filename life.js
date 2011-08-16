@@ -1,5 +1,5 @@
 (function () {
-    var canvas, ctx, fg, bg, size, timer, rows, cols, cells, width, height;
+    var canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height;
 
     function clear() {
         ctx.fillStyle = bg;
@@ -10,14 +10,17 @@
         var r, c;
         for (r = 0; r < rows; r++) {
             cells[r] = [];
+            oldCells[r] = [];
             for (c = 0; c < cols; c++) {
                 cells[r][c] = 0;
+                oldCells[r][c] = 0;
             }
         }
         clear();
     }
 
     function applyRule(cell, neighbours) {
+
         var sum = 0,
             i;
         for (i = 0; i < neighbours.length; i++) {
@@ -34,10 +37,10 @@
         } else {
             if (sum === 3) {
                 return 1;
+            } else {
+                return 0; //stay dead
             }
         }
-        return 0;
-
     }
 
     function render() {
@@ -53,7 +56,7 @@
         }
     }
 
-    function seed() {
+    function random_seed() {
         var i, row, col;
         reset();
         //set color to fg
@@ -68,27 +71,46 @@
     }
 
     function iterate() {
-        var row, col, toprow, botrow, leftcol, rightcol, top, topright, right, botright, bottom, botleft, left, topleft;
+        var row, col, top, topright, right, botright, bottom, botleft, left, topleft;
+        var topEdge = false,
+            botEdge = false,
+            leftEdge = false,
+            rightEdge = false;
+        var newCells = oldCells;
         for (row = 0; row < rows; row++) {
+            topEdge = (row === 0);
+            botEdge = (row === rows - 1);
             for (col = 0; col < cols; col++) {
+                leftEdge = (col === 0);
+                rightEdge = (col === cols - 1);
                 //wrap cells if out of bounds
-                toprow = row ? row - 1 : rows - 1;
-                botrow = row + 1 < rows ? row + 1 : 0;
-                rightcol = col + 1 < cols ? col + 1 : 0;
-                leftcol = col ? col - 1 : cols - 1;
+                //toprow = row ? row - 1 : rows - 1;
+                //botrow = row + 1 < rows ? row + 1 : 0;
+                //rightcol = col + 1 < cols ? col + 1 : 0;
+                //leftcol = col ? col - 1 : cols - 1;
+                //top = cells[toprow][col];
+                //topright = cells[toprow][rightcol];
+                //right = cells[row][rightcol];
+                //botright = cells[botrow][rightcol];
+                //bottom = cells[botrow][col];
+                //botleft = cells[botrow][leftcol];
+                //left = cells[row][leftcol];
+                //topleft = cells[toprow][leftcol];
+                top = topEdge ? 0 : cells[row - 1][col];
+                topright = (topEdge || rightEdge) ? 0 : cells[row - 1][col + 1];
+                right = rightEdge ? 0 : cells[row][col + 1];
+                botright = (botEdge || rightEdge) ? 0 : cells[row + 1][col + 1];
+                bottom = botEdge ? 0 : cells[row + 1][col];
+                botleft = (botEdge || leftEdge) ? 0 : cells[row + 1][col - 1];
+                left = leftEdge ? 0 : cells[row][col - 1];
+                topleft = (topEdge || leftEdge) ? 0 : cells[row - 1][col - 1];
 
-                top = cells[toprow][col];
-                topright = cells[toprow][rightcol];
-                right = cells[row][rightcol];
-                botright = cells[botrow][rightcol];
-                bottom = cells[botrow][col];
-                botleft = cells[botrow][leftcol];
-                left = cells[row][leftcol];
-                topleft = cells[toprow][leftcol];
-
-                cells[row][col] = applyRule(cells[row][col], [top, topright, right, botright, bottom, botleft, left, topleft]);
+                newCells[row][col] = applyRule(cells[row][col], [top, topright, right, botright, bottom, botleft, left, topleft]);
             }
         }
+        //oldCells
+        oldCells = cells;
+        cells = newCells;
         render();
     }
 
@@ -104,6 +126,7 @@
             height = _height;
             size = cellsize || 1;
             cells = [];
+            oldCells = [];
 
             if (!ctx) {
                 window.alert("unable to initialize HTML Canvas. You might want to try another browser.");
@@ -114,10 +137,10 @@
             canvas.setAttribute("height", height);
             cols = Math.floor(width / size);
             rows = Math.floor(height / size);
-
+            reset();
         },
 
-        seed: seed,
+        random_seed: random_seed,
 
         start: function () {
             if (timer) {
@@ -134,7 +157,26 @@
                 timer = null;
             }
         },
-        reset: reset
+        reset: reset,
+
+        insert_seed: function (seedText) {
+            var line, r, c;
+            var lines = seedText.split('\n');
+            var row_offset = 30;
+            var col_offset = 30;
+            for (r = 0; r < lines.length; r++) {
+                line = lines[r];
+                line = line.trim();
+                for (c = 0; c < line.length; c++) {
+                    if (line[c] === '.') {
+                        cells[r + row_offset][c + col_offset] = 0;
+                    } else {
+                        cells[r + row_offset][c + col_offset] = 1;
+                    }
+                }
+            }
+            render();
+        }
     };
 
 
