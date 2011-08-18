@@ -5,7 +5,11 @@
  */
 
 var fs = require("fs");
-var lexicon_html_file = "../lexicon/lexicon.htm";
+if (process.argv.length < 3) {
+    console.log("parse requires a life lexicon HTML file as argument");
+    process.exit(1);
+}
+var lexicon_html_file = process.argv[2];
 var lexicon_str = fs.readFileSync(lexicon_html_file, 'UTF-8');
 var lines = lexicon_str.split("\n");
 var patterns = [];
@@ -101,5 +105,5 @@ stream.on('data', function (chunk) {
 });
 
 stream.on('end', function () {
-    console.log('saved png');
+    console.log('saved data.png');
 });
