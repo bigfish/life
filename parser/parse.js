@@ -5,6 +5,7 @@
  */
 
 var fs = require("fs");
+var Canvas = require("canvas");
 if (process.argv.length < 3) {
     console.log("parse requires a life lexicon HTML file as argument");
     process.exit(1);
@@ -79,11 +80,41 @@ patterns.forEach(function (pattern, i, a) {
     }
 });
 //write metadata file
-fs.writeFileSync("metadata.js", "METADATA=" + JSON.stringify(metadata));
-var imgSize = Math.ceil(Math.sqrt(pixbuf.length));
-var Canvas = require("canvas");
+var metadata_str = "METADATA=" + JSON.stringify(metadata);
+fs.writeFileSync("metadata.js", metadata_str);
+//generate 8-bit metadata.png using metadata converted from ASCII to 0-255
+var imgSize = Math.ceil(Math.sqrt(metadata_str.length));
 var canvas = new Canvas(imgSize, imgSize);
 var ctx = canvas.getContext("2d");
+var col;
+var i, n, charIdx, charCode;
+var space = 'rgb(32,32,32)';
+ctx.fillStyle = space;
+ctx.fillRect(0, 0, imgSize, imgSize);
+// set color to ascii value of corresponding char
+for (i = 0; i < metadata_str.length; i++) {
+    charCode = metadata_str.charCodeAt(i);
+    ctx.fillStyle = 'rgb(' + charCode + ',' + charCode + ',' + charCode + ')';
+    ctx.fillRect(i % imgSize, Math.floor(i / imgSize), 1, 1);
+}
+
+//write png
+var out = fs.createWriteStream(__dirname + '/metadata.png'),
+    stream = canvas.createPNGStream();
+
+stream.on('data', function (chunk) {
+    out.write(chunk);
+});
+
+stream.on('end', function () {
+    console.log('saved metadata.png');
+});
+
+//generate data.png image with pattern data as black & white pixels
+imgSize = Math.ceil(Math.sqrt(pixbuf.length));
+canvas = new Canvas(imgSize, imgSize);
+ctx = canvas.getContext("2d");
+var out2, stream2;
 var p;
 //set entire img to white
 ctx.fillStyle = "#FFF";
@@ -97,13 +128,13 @@ for (p = 0; p < pixbuf.length; p++) {
 }
 //write png
 var fs = require('fs'),
-    out = fs.createWriteStream(__dirname + '/data.png'),
-    stream = canvas.createPNGStream();
+    out2 = fs.createWriteStream(__dirname + '/data.png'),
+    stream2 = canvas.createPNGStream();
 
-stream.on('data', function (chunk) {
-    out.write(chunk);
+stream2.on('data', function (chunk) {
+    out2.write(chunk);
 });
 
-stream.on('end', function () {
+stream2.on('end', function () {
     console.log('saved data.png');
 });
