@@ -80,7 +80,7 @@ patterns.forEach(function (pattern, i, a) {
     }
 });
 //write metadata file
-var metadata_str = "METADATA=" + JSON.stringify(metadata);
+var metadata_str = "METADATA=" + JSON.stringify(metadata) + ";";
 fs.writeFileSync("metadata.js", metadata_str);
 //generate 8-bit metadata.png using metadata converted from ASCII to 0-255
 var imgSize = Math.ceil(Math.sqrt(metadata_str.length));
@@ -88,14 +88,19 @@ var canvas = new Canvas(imgSize, imgSize);
 var ctx = canvas.getContext("2d");
 var col;
 var i, n, charIdx, charCode;
-var space = 'rgb(32,32,32)';
+var space = 'rgba(32,32,32,1)';
+var row, col;
 ctx.fillStyle = space;
 ctx.fillRect(0, 0, imgSize, imgSize);
+
 // set color to ascii value of corresponding char
 for (i = 0; i < metadata_str.length; i++) {
     charCode = metadata_str.charCodeAt(i);
-    ctx.fillStyle = 'rgb(' + charCode + ',' + charCode + ',' + charCode + ')';
-    ctx.fillRect(i % imgSize, Math.floor(i / imgSize), 1, 1);
+    ctx.fillStyle = 'rgba(' + charCode + ',' + charCode + ',' + charCode + ',1)';
+    row = Math.floor(i / imgSize);
+    col = i % imgSize;
+    console.log(col, row, charCode);
+    ctx.fillRect(col, row, 1, 1);
 }
 
 //write png
