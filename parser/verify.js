@@ -1,4 +1,5 @@
-/*jslint node:true white:false*/
+/*jslint node:true white:false evil:true*/
+/*globals METADATA */
 /**
  * verify that the images generated, when the content
  * is extracted from them, is the same as the original text
@@ -24,9 +25,10 @@ img.onload = function () {
 
     var imagedata = ctx.getImageData(0, 0, width, height);
     var data = imagedata.data;
-    var i, str = "";
+    var i, patterns_str = "",
+        patterns_data = [];
     for (i = 0; i < data.length; i += 4) {
-        str += data[i] ? "O" : ".";
+        patterns_str += data[i] ? "." : "O";
     }
     //load the metadata
     var img2 = new Canvas.Image();
@@ -43,17 +45,52 @@ img.onload = function () {
 
         var imagedata = ctx.getImageData(0, 0, width, height);
         var data = imagedata.data;
-        var i, char, str = "";
+        var i, p, char, metadata_str = "";
         for (i = 0; i < data.length; i += 4) {
             char = String.fromCharCode(data[i]);
-            str += char;
+            metadata_str += char;
         }
-        str = str.trim();
-        if (metaData === str) {
+        metadata_str = metadata_str.trim();
+        if (metaData === metadata_str) {
             console.log("verified metadata");
+        } else {
+            console.log("WARNING: metadata was corrupted");
         }
+        //now reconstruct the patterns.js data
+        eval(metadata_str);
+        var rows, rowstr, r, cols, start, patLines;
+        for (p = 0; p < METADATA.length; p += 4) {
+            patLines = [];
+            start = METADATA[p + 1];
+            rows = METADATA[p + 2];
+            cols = METADATA[p + 3];
+            for (r = 0; r < rows; r++) {
+                rowstr = patterns_str.substring(start + r * cols, start + (r + 1) * cols);
+                patLines.push(rowstr);
+            }
+            patterns_data.push({
+                name: METADATA[p],
+                pattern: patLines.join("\n")
+            });
+        }
+        var result = "PATTERNS=" + JSON.stringify(patterns_data) + ";";
+        if (result === patternData) {
+            console.log("verified patterns");
+        } else {
+            console.log("WARNING: pattern data was corrupted");
+        }
+        //useful for debugging:
+/*for (i = 0; i < patternData.length; i++) {
+            if (result.charAt(i) !== patternData.charAt(i)) {
+                console.log("difference at " + i, patternData.charAt(i), result.charAt(i));
+                console.log(patternData.substring(i - 20, i + 20));
+                console.log(result.substring(i - 20, i + 40));
+                break;
+            }
+        }*/
+        //console.log(result);
     };
-    img2.src = "metadata.png";
+    img2.src = "metadata_o.png";
 };
 
 img.src = "data_o.png";

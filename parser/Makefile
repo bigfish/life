@@ -1,7 +1,7 @@
 #!/bin/bash
 LEXICON := "lexicon.htm"
 
-all: clean patterns compress_patterns compress_metadata results
+all: clean patterns compress_patterns compress_metadata results verify
 .PHONY: all
 
 clean: 
@@ -21,6 +21,9 @@ compress_metadata:	metadata.png
 
 results:
 	@getK.sh
+
+verify:
+	@node verify.js
 	
 
 

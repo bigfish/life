@@ -43,6 +43,23 @@ for (i = 0; i < lines.length; i++) {
     }
     if (endPre.test(line)) {
         insidePre = false;
+        //normalize number of cols in rows 
+        //perhaps irregular patterns should ne discarded as they may be wrong ?
+        if (patLines.length) {
+            var q, len = patLines[0].length;
+            for (q = 0; q < patLines.length; q++) {
+                //truncate extra long lines
+                if (patLines[q].length > len) {
+                    patLines[q] = patLines[q].slice(0, len);
+                } else if (patLines[q].length < len) {
+                    //pad short line with dots -- in the one known case,
+                    //LWSS, I think this is the correct solution
+                    while (patLines[q].length < len) {
+                        patLines[q] += '.';
+                    }
+                }
+            }
+        }
         patterns.push({
             name: patName,
             pattern: patLines.join("\n")
@@ -55,7 +72,7 @@ for (i = 0; i < lines.length; i++) {
 }
 
 //write patterns file for
-fs.writeFileSync("patterns.js", "PATTERNS=" + JSON.stringify(patterns));
+fs.writeFileSync("patterns.js", "PATTERNS=" + JSON.stringify(patterns) + ";");
 
 var metadata = [];
 var pixbuf = []; //raw array of 0s & 1s which will be output to image
@@ -99,7 +116,7 @@ for (i = 0; i < metadata_str.length; i++) {
     ctx.fillStyle = 'rgba(' + charCode + ',' + charCode + ',' + charCode + ',1)';
     row = Math.floor(i / imgSize);
     col = i % imgSize;
-    console.log(col, row, charCode);
+    //console.log(col, row, charCode);
     ctx.fillRect(col, row, 1, 1);
 }
 
