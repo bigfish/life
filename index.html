@@ -30,7 +30,6 @@
       }
       #controls {
         margin-bottom: 5px;
-        text-align: right;
       }
       #controls a, #controls a:visited, a.button {
         text-decoration:none;
@@ -40,6 +39,7 @@
         color: red;
       }
       #seed_form #seed_text {
+        display:none;
         background-color: black;
         color: white;
         font-family: Courier, monospace;
@@ -48,32 +48,31 @@
     </style>
   </head>
   <body >
-    <h1>LIFE:Forms</h1>
+    <!--<h1>LIFE:Forms</h1>-->
     <table width="100%" height="100%" cellpadding=5>
       <tr>
         <td width="600" height="600" valign="top">
+          <form id="seed_form">
             <div id="controls" >
-              <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
+              LIFE FORMS:
+              <select id="patterns"></select>
+              <a class="button"  href="#" onclick="LIFE.insert_seed(document.getElementById('seed_text').value)">INSERT</a>
               <a href="#" onclick="LIFE.start();return false" >START</a>&nbsp;
+              <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
               <a href="#" onclick="LIFE.step();return false" >STEP</a>&nbsp;
               <a href="#" onclick="LIFE.reset();return false" >RESET</a>&nbsp;
               <a href="#" onclick="LIFE.random_seed();return false" >RANDOM</a>&nbsp;
             </div>
-            <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-            <script src="life.js" ></script>
-        </td>
-        <td valign="top">
-          <form id="seed_form">
-            <select id="patterns"></select>
-              <a class="button"  href="#" onclick="LIFE.insert_seed(document.getElementById('seed_text').value)">INSERT SEED:</a>
-              <textarea id="seed_text" rows="40" cols="48" ></textarea>
+              <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
           </form>
+            <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
         </td>
       </tr>
     </table>
+    <script src="life.js" ></script>
     <script>
       LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
-      LIFE.loadPatterns(document.getElementById("patterns"));
+      LIFE.loadPatterns(document.getElementById("patterns"), document.getElementById("seed_text"));
     </script>
     
   </body>

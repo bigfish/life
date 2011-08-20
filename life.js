@@ -98,6 +98,7 @@
                 //botleft = cells[botrow][leftcol];
                 //left = cells[row][leftcol];
                 //topleft = cells[toprow][leftcol];
+                //set out-of-bounds to 0
                 top = topEdge ? 0 : cells[row - 1][col];
                 topright = (topEdge || rightEdge) ? 0 : cells[row - 1][col + 1];
                 right = rightEdge ? 0 : cells[row][col + 1];
@@ -116,7 +117,7 @@
         render();
     }
 
-    function loadPatterns(menu) {
+    function loadPatterns(menu, textArea) {
         var patterns_img = new Image(),
             metadata_img = new Image(),
             canvas = document.createElement('canvas'),
@@ -136,7 +137,7 @@
             ctx.drawImage(patterns_img, 0, 0, width, height);
             imagedata = ctx.getImageData(0, 0, width, height).data;
             for (i = 0; i < imagedata.length; i += 4) {
-                patterns_data.push(imagedata[i] ? 'O' : '.');
+                patterns_data.push(imagedata[i] ? '.' : 'O');
             }
             patterns_data_text = patterns_data.join("");
             //load metadata
@@ -168,6 +169,9 @@
 
                 }
                 menu.innerHTML = options.join("");
+                menu.onchange = function () {
+                    textArea.value = menu.options[menu.selectedIndex].value;
+                };
             };
             metadata_img.src = "parser/metadata_o.png";
         };
