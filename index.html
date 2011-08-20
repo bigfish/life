@@ -2,15 +2,22 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>LIFE: The Game</title>
+    <title>LIFE:Forms</title>
     <style>
       body {
         color:#CCC;
         background-color: black;
         font-family:Verdana,Arial,Helvetica,sans-serif;
         font-size: 0.8em;
+        margin:0;
       }
-      h1,h2,h3 {
+      h1 {
+        position:absolute;
+        font-weight:normal;
+        margin:0;
+        padding:0 0 0 5px;
+      }
+      h3 {
         text-align:center;
       }
       #game {
@@ -41,6 +48,7 @@
     </style>
   </head>
   <body >
+    <h1>LIFE:Forms</h1>
     <table width="100%" height="100%" cellpadding=5>
       <tr>
         <td width="600" height="600" valign="top">
@@ -53,27 +61,20 @@
             </div>
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
             <script src="life.js" ></script>
-            <script>
-              LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
-              //LIFE.random_seed();
-              //LIFE.start();
-            </script>
         </td>
         <td valign="top">
           <form id="seed_form">
+            <select id="patterns"></select>
               <a class="button"  href="#" onclick="LIFE.insert_seed(document.getElementById('seed_text').value)">INSERT SEED:</a>
               <textarea id="seed_text" rows="40" cols="48" ></textarea>
-              <p>Enter seed pattern of . and O (capital 'o') manually, or copy and paste examples 
-              from the lexicon. Then click 'INSERT SEED', and 'START'. Whitespace will be ignored.</p>
-
           </form>
-        </td>
-        <td width="100%" valign="top">
-          <iframe width="100%" id="lexicon" src="lexicon/lexicon.htm">
         </td>
       </tr>
     </table>
-    
+    <script>
+      LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
+      LIFE.loadPatterns(document.getElementById("patterns"));
+    </script>
     
   </body>
 </html>

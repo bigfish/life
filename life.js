@@ -1,3 +1,5 @@
+/*jslint evil:true */
+/*globals METADATA */
 (function () {
     var canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height;
 
@@ -114,6 +116,67 @@
         render();
     }
 
+    function loadPatterns(menu) {
+        var patterns_img = new Image(),
+            metadata_img = new Image(),
+            canvas = document.createElement('canvas'),
+            ctx = canvas.getContext("2d"),
+            patterns_data = [],
+            patterns_data_text = "",
+            pattern_str = "",
+            patterns_metadata = [],
+            patterns_metadata_text = "";
+
+        patterns_img.onload = function () {
+            var i, o, imagedata, rows, cols, r, c, offset, options = [],
+                width = patterns_img.width,
+                height = patterns_img.height;
+            canvas.setAttribute("width", width + "px");
+            canvas.setAttribute("height", height + "px");
+            ctx.drawImage(patterns_img, 0, 0, width, height);
+            imagedata = ctx.getImageData(0, 0, width, height).data;
+            for (i = 0; i < imagedata.length; i += 4) {
+                patterns_data.push(imagedata[i] ? 'O' : '.');
+            }
+            patterns_data_text = patterns_data.join("");
+            //load metadata
+            metadata_img.onload = function () {
+                width = metadata_img.width;
+                height = metadata_img.height;
+                canvas.setAttribute("width", width + "px");
+                canvas.setAttribute("height", height + "px");
+                ctx.drawImage(metadata_img, 0, 0, width, height);
+                imagedata = ctx.getImageData(0, 0, width, height).data;
+                for (i = 0; i < imagedata.length; i += 4) {
+                    patterns_metadata.push(String.fromCharCode(imagedata[i]));
+                }
+                eval(patterns_metadata.join(""));
+                //construct options for menu
+                for (o = 0; o < METADATA.length; o += 4) {
+                    pattern_str = "";
+                    offset = METADATA[o + 1];
+                    rows = METADATA[o + 2];
+                    cols = METADATA[o + 3];
+                    for (r = 0; r < rows; r++) {
+                        pattern_str += patterns_data_text.substring(offset + r * cols, offset + (r + 1) * cols);
+                        if (r < rows - 1) {
+                            pattern_str += "\n";
+                        }
+
+                    }
+                    options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
+
+                }
+                menu.innerHTML = options.join("");
+            };
+            metadata_img.src = "parser/metadata_o.png";
+        };
+        patterns_img.onerror = function () {
+            console.log("failed to load patterns data image");
+        };
+        patterns_img.src = "parser/data_o.png";
+    }
+
 
     window.LIFE = {
 
@@ -176,7 +239,10 @@
                 }
             }
             render();
-        }
+        },
+
+        loadPatterns: loadPatterns
+
     };
 
 

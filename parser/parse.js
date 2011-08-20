@@ -44,7 +44,7 @@ for (i = 0; i < lines.length; i++) {
     if (endPre.test(line)) {
         insidePre = false;
         //normalize number of cols in rows 
-        //perhaps irregular patterns should ne discarded as they may be wrong ?
+        //perhaps irregular patterns should be discarded as they may be wrong ?
         if (patLines.length) {
             var q, len = patLines[0].length;
             for (q = 0; q < patLines.length; q++) {
