@@ -118,12 +118,13 @@
     }
 
     function makeThumbnails(t_width, t_height) {
-        var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = document.getElementById("thumbnails"),
+        var p, pattern, c, r, scale_x, scale_y, space, rows, canvasEl = document.getElementById("thumbnails"),
             ctx = canvasEl.getContext("2d"),
             numPatterns = patterns.length,
             c_height = numPatterns * t_height;
 
         canvasEl.setAttribute("width", t_width + "px");
+        space = 5;
         //calculate height required
         canvasEl.setAttribute("height", c_height + "px");
         ctx.fillStyle = "black";
@@ -133,11 +134,17 @@
             pattern = patterns[p];
             scale_x = t_width / pattern.cols;
             scale_y = t_height / pattern.rows;
+            //preserve aspect ratio
+            if (rows > cols) {
+                scale_y = scale_x;
+            } else {
+                scale_x = scale_y;
+            }
             rows = pattern.data.split("\n");
             for (r = 0; r < pattern.rows; r++) {
                 for (c = 0; c < pattern.cols; c++) {
                     if (rows[r].charAt(c) === "O") {
-                        ctx.fillRect(Math.floor(c * scale_x), Math.floor((p * t_height) + r * scale_y), scale_x, scale_y);
+                        ctx.fillRect(Math.floor(c * scale_x), Math.floor((p * (t_height + space)) + r * scale_y), scale_x, scale_y);
                     }
                 }
             }
