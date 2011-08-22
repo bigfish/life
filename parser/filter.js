@@ -14,6 +14,11 @@ var Canvas = require("Canvas");
 var patterns_js = fs.readFileSync("patterns.js", 'UTF-8');
 var patterns_json = patterns_js.substring("PATTERNS=".length, patterns_js.length - 1);
 var PATTERNS = JSON.parse(patterns_json);
+var INCLUDE_STATIC = true;
+
+if (process.argv.length === 3) {
+    INCLUDE_STATIC = process.argv[2] === "true" ? true : false;
+}
 
 //var total_patterns = PATTERNS.length;
 //make a canvas of 100x100 for testing
@@ -181,16 +186,22 @@ function live() {
     return i;
 }
 //MAIN
+var filtered_patterns = [];
 var p, years;
 LIFE.init();
 for (p = 0; p < PATTERNS.length; p++) {
     LIFE.reset();
     LIFE.insert_seed(PATTERNS[p].pattern);
+    //get lifespan
     years = live();
-    if (years < 100) {
-        PATTERNS[p].lifespan = years;
-    } else {
-        PATTERNS[p].lifespan = 100;
+    //if (years < 100) {
+    ////PATTERNS[p].lifespan = years;
+    //} else {
+    //PATTERNS[p].lifespan = 100;
+    //}
+    //apply filter
+    if (INCLUDE_STATIC || years > 0) {
+        filtered_patterns.push(PATTERNS[p]);
     }
 }
-fs.writeFileSync("patterns_analyzed.js", "PATTERNS=" + JSON.stringify(PATTERNS) + ";");
+fs.writeFileSync("patterns_filtered.js", "PATTERNS=" + JSON.stringify(filtered_patterns) + ";");

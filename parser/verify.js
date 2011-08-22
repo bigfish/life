@@ -6,8 +6,13 @@
  */
 var fs = require("fs");
 var Canvas = require("canvas");
+var patterns_file = "patterns.js";
 
-var patternData = fs.readFileSync("patterns.js", 'UTF-8');
+//use patterns file if provided as argument
+if (process.argv.length === 3) {
+    patterns_file = process.argv[2];
+}
+var patternData = fs.readFileSync(patterns_file, 'UTF-8');
 var metaData = fs.readFileSync("metadata.js", "UTF-8");
 
 var img = new Canvas.Image();
@@ -80,14 +85,14 @@ img.onload = function () {
             console.log("WARNING: pattern data was corrupted");
         }
         //useful for debugging:
-/*for (i = 0; i < patternData.length; i++) {
+        for (i = 0; i < patternData.length; i++) {
             if (result.charAt(i) !== patternData.charAt(i)) {
                 console.log("difference at " + i, patternData.charAt(i), result.charAt(i));
                 console.log(patternData.substring(i - 20, i + 20));
                 console.log(result.substring(i - 20, i + 40));
                 break;
             }
-        }*/
+        }
         //console.log(result);
     };
     img2.src = "metadata_o.png";

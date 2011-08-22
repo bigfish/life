@@ -5,17 +5,18 @@
  */
 var fs = require("fs");
 var Canvas = require("canvas");
-var patterns_file = "metadata.js";
+var patterns_file = "patterns.js";
 //use patterns file if provided as argument
 if (process.argv.length === 3) {
     patterns_file = process.argv[2];
 }
-var patterns_js = fs.readFileSync("patterns.js", 'UTF-8');
+var patterns_js = fs.readFileSync(patterns_file, 'UTF-8');
 var patterns_json = patterns_js.substring("PATTERNS=".length, patterns_js.length - 1);
 var patterns = JSON.parse(patterns_json);
 //generate metadata and pixel data
 var metadata = [];
 var pixbuf = []; //raw array of 0s & 1s which will be output to image
+console.log("processing " + patterns.length + "patterns");
 patterns.forEach(function (pattern, i, a) {
     //console.log(pattern.name);
     var c, char, patternData = pattern.pattern,
