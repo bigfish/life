@@ -44,6 +44,11 @@
         color: white;
         font-family: Courier, monospace;
       }
+      #thumbnails_holder {
+        height: 100%;
+        overflow: auto;
+        width: 115px;
+      }
 
     </style>
   </head>
@@ -51,7 +56,7 @@
     <!--<h1>LIFE:Forms</h1>-->
     <table width="100%" height="100%" cellpadding=5>
       <tr>
-        <td width="600" height="600" valign="top">
+        <td valign="top">
           <form id="seed_form">
             <div id="controls" >
               LIFE FORMS:
@@ -66,6 +71,11 @@
               <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
           </form>
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+        </td>
+        <td align="left">
+          <div id="thumbnails_holder">
+              <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+          </div>
         </td>
       </tr>
     </table>

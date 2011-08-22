@@ -1,7 +1,7 @@
 /*jslint evil:true */
 /*globals METADATA */
 (function () {
-    var canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height;
+    var canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height, patterns;
 
     function clear() {
         ctx.fillStyle = bg;
@@ -117,6 +117,33 @@
         render();
     }
 
+    function makeThumbnails(t_width, t_height) {
+        var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = document.getElementById("thumbnails"),
+            ctx = canvasEl.getContext("2d"),
+            numPatterns = patterns.length,
+            c_height = numPatterns * t_height;
+
+        canvasEl.setAttribute("width", t_width + "px");
+        //calculate height required
+        canvasEl.setAttribute("height", c_height + "px");
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, t_width, c_height);
+        ctx.fillStyle = "#0F0";
+        for (p = 0; p < patterns.length; p++) {
+            pattern = patterns[p];
+            scale_x = t_width / pattern.cols;
+            scale_y = t_height / pattern.rows;
+            rows = pattern.data.split("\n");
+            for (r = 0; r < pattern.rows; r++) {
+                for (c = 0; c < pattern.cols; c++) {
+                    if (rows[r].charAt(c) === "O") {
+                        ctx.fillRect(Math.floor(c * scale_x), Math.floor((p * t_height) + r * scale_y), scale_x, scale_y);
+                    }
+                }
+            }
+        }
+    }
+
     function loadPatterns(menu, textArea) {
         var patterns_img = new Image(),
             metadata_img = new Image(),
@@ -127,7 +154,7 @@
             pattern_str = "",
             patterns_metadata = [],
             patterns_metadata_text = "";
-
+        patterns = [];
         patterns_img.onload = function () {
             var i, o, imagedata, rows, cols, r, c, offset, options = [],
                 width = patterns_img.width,
@@ -166,12 +193,19 @@
 
                     }
                     options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
-
+                    //add to patterns collection
+                    patterns.push({
+                        name: METADATA[o],
+                        rows: rows,
+                        cols: cols,
+                        data: pattern_str
+                    });
                 }
                 menu.innerHTML = options.join("");
                 menu.onchange = function () {
                     textArea.value = menu.options[menu.selectedIndex].value;
                 };
+                makeThumbnails(100, 100);
             };
             metadata_img.src = "parser/metadata_o.png";
         };
