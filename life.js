@@ -300,9 +300,7 @@
             var that = this;
 
             function processClick(event) {
-                var node;
-                var canvas = document.getElementsByTagName('canvas')[0];
-                var context = canvas.getContext('2d');
+                var node = event.target;
                 var x = event.clientX;
                 var y = event.clientY;
                 while (node) {
@@ -310,9 +308,8 @@
                     y -= node.offsetTop - node.scrollTop;
                     node = node.offsetParent;
                 }
-                var relX = x - 600;
-                var col = Math.floor(relX / (t_width + space));
-                var row = Math.floor(y / (t_height + space));
+                var col = Math.floor((event.target.parentNode.scrollLeft + x) / (t_width + space));
+                var row = Math.floor((event.target.parentNode.scrollTop + y) / (t_height + space));
                 var idx = col * t_rows + row;
                 console.log(idx);
                 if (idx < patterns.length) {
