@@ -123,10 +123,16 @@
             numPatterns = patterns.length,
             c_height = numPatterns * t_height;
 
-        canvasEl.setAttribute("width", t_width + "px");
         space = 5;
+        //determine how many cols can be fit in the available space
+        var t_cols = Math.floor((window.innerWidth - 600) / (t_width + space));
+        //TODO: consider if not enough space is available for even one
+        //the game area should be reduced to allow size for it
+        t_cols = t_cols || 1;
+        var t_rows = Math.ceil(patterns.length / t_cols);
+        canvasEl.setAttribute("width", t_cols * (t_width + space) + "px");
         //calculate height required
-        canvasEl.setAttribute("height", c_height + "px");
+        canvasEl.setAttribute("height", t_rows * (t_width + space) + "px");
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, t_width, c_height);
         ctx.fillStyle = "#0F0";
@@ -136,15 +142,15 @@
             scale_y = t_height / pattern.rows;
             //preserve aspect ratio
             if (rows > cols) {
-                scale_y = scale_x;
-            } else {
                 scale_x = scale_y;
+            } else {
+                scale_y = scale_x;
             }
             rows = pattern.data.split("\n");
             for (r = 0; r < pattern.rows; r++) {
                 for (c = 0; c < pattern.cols; c++) {
                     if (rows[r].charAt(c) === "O") {
-                        ctx.fillRect(Math.floor(c * scale_x), Math.floor((p * (t_height + space)) + r * scale_y), scale_x, scale_y);
+                        ctx.fillRect((Math.floor(p / t_rows) * (t_width + space)) + Math.floor(c * scale_x), Math.floor((p % t_rows) * (t_height + space) + r * scale_y), scale_x, scale_y);
                     }
                 }
             }
