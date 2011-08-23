@@ -31,11 +31,11 @@
       #controls {
         margin-bottom: 5px;
       }
-      #controls a, #controls a:visited, a.button {
+      a, a:visited {
         text-decoration:none;
         color: yellow;
       }
-      #controls a:active, a.button:active {
+      a:active {
         color: red;
       }
       #seed_form #seed_text {
@@ -72,6 +72,8 @@
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
         </td>
         <td align="left">
+          <a href="#" id="thumbnails_prev_btn" onclick="LIFE.showPrev()"> &lt;&lt; PREV</a> &nbsp;|&nbsp;
+          <a href="#" id="thumbnails_next_btn" onclick="LIFE.showNext()">NEXT &gt;&gt;</a>
           <div id="thumbnails_holder">
               <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
           </div>

@@ -1,7 +1,9 @@
 /*jslint evil:true */
 /*globals METADATA */
 (function () {
-    var canvas, t_canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height, patterns, makeThumbnails;
+    var canvas, t_canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height, patterns, makeThumbnails, numPages, curPage;
+    var THUMBNAIL_WIDTH = 100;
+    var THUMBNAIL_HEIGHT = 100;
 
     function clear() {
         ctx.fillStyle = bg;
@@ -245,7 +247,7 @@
                     menu.onchange = function () {
                         textArea.value = menu.options[menu.selectedIndex].value;
                     };
-                    that.makeThumbnails(100, 100);
+                    that.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
                 };
                 metadata_img.src = "parser/metadata_o.png";
             };
@@ -255,7 +257,7 @@
             patterns_img.src = "parser/data_o.png";
         },
 
-        makeThumbnails: function (t_width, t_height) {
+        makeThumbnails: function (t_width, t_height, page) {
             var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = document.getElementById("thumbnails"),
                 ctx = canvasEl.getContext("2d"),
                 numPatterns = patterns.length,
@@ -263,12 +265,13 @@
                 //determine how many cols can be fit in the available space
                 //TODO: consider if not enough space is available for even one
                 //the game area should be reduced to allow size for it
-                t_cols = Math.floor((window.innerWidth - 600) / (t_width + space)) || 1,
-                t_rows = Math.ceil(patterns.length / t_cols),
+                t_cols = Math.floor((window.innerWidth - 650) / (t_width + space)) || 1,
+                t_rows = Math.floor(600 / (t_height + space)) || 1,
                 c_width = t_cols * (t_width + space),
                 c_height = t_rows * (t_height + space);
 
-
+            curPage = page === undefined ? 0 : page;
+            numPages = Math.ceil(numPatterns / (t_cols * t_rows));
             t_canvas = canvasEl;
 
             canvasEl.setAttribute("width", c_width + "px");
@@ -276,9 +279,13 @@
             canvasEl.setAttribute("height", c_height + "px");
             ctx.fillStyle = "#000";
             ctx.fillRect(0, 0, c_width, c_height);
-            ctx.fillStyle = "#FFF";
-            for (p = 0; p < patterns.length; p++) {
-                pattern = patterns[p];
+            ctx.fillStyle = "#CCC";
+            //render page of thumbnails
+            for (p = 0; p < t_rows * t_cols; p++) {
+                pattern = patterns[p + (t_cols * t_rows * curPage)];
+                if (!pattern) {
+                    break;
+                }
                 scale_x = t_width / pattern.cols;
                 scale_y = t_height / pattern.rows;
                 //preserve aspect ratio
@@ -310,8 +317,7 @@
                 }
                 var col = Math.floor((event.target.parentNode.scrollLeft + x) / (t_width + space));
                 var row = Math.floor((event.target.parentNode.scrollTop + y) / (t_height + space));
-                var idx = col * t_rows + row;
-                console.log(idx);
+                var idx = (curPage * t_rows * t_cols) + col * t_rows + row;
                 if (idx < patterns.length) {
                     that.insert_seed(patterns[idx].data);
                 }
@@ -324,6 +330,14 @@
 
         saveThumbnails: function () {
             document.write("<img src='" + t_canvas.toDataURL("image/png") + "' >");
+        },
+
+        showNext: function () {
+            this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, curPage < numPages ? curPage + 1 : 0);
+        },
+
+        showPrev: function () {
+            this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, curPage ? curPage - 1 : numPages - 1);
         }
 
     };
