@@ -4,6 +4,7 @@
     var canvas, t_canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height, patterns, makeThumbnails, numPages, curPage;
     var THUMBNAIL_WIDTH = 100;
     var THUMBNAIL_HEIGHT = 100;
+    var WRAP = true;
 
     function clear() {
         ctx.fillStyle = bg;
@@ -75,7 +76,7 @@
     }
 
     function iterate() {
-        var row, col, top, topright, right, botright, bottom, botleft, left, topleft;
+        var row, col, rightcol, leftcol, top, toprow, botrow, topright, right, botright, bottom, botleft, left, topleft;
         var topEdge = false,
             botEdge = false,
             leftEdge = false,
@@ -88,27 +89,32 @@
                 leftEdge = (col === 0);
                 rightEdge = (col === cols - 1);
                 //wrap cells if out of bounds
-                //toprow = row ? row - 1 : rows - 1;
-                //botrow = row + 1 < rows ? row + 1 : 0;
-                //rightcol = col + 1 < cols ? col + 1 : 0;
-                //leftcol = col ? col - 1 : cols - 1;
-                //top = cells[toprow][col];
-                //topright = cells[toprow][rightcol];
-                //right = cells[row][rightcol];
-                //botright = cells[botrow][rightcol];
-                //bottom = cells[botrow][col];
-                //botleft = cells[botrow][leftcol];
-                //left = cells[row][leftcol];
-                //topleft = cells[toprow][leftcol];
-                //set out-of-bounds to 0
-                top = topEdge ? 0 : cells[row - 1][col];
-                topright = (topEdge || rightEdge) ? 0 : cells[row - 1][col + 1];
-                right = rightEdge ? 0 : cells[row][col + 1];
-                botright = (botEdge || rightEdge) ? 0 : cells[row + 1][col + 1];
-                bottom = botEdge ? 0 : cells[row + 1][col];
-                botleft = (botEdge || leftEdge) ? 0 : cells[row + 1][col - 1];
-                left = leftEdge ? 0 : cells[row][col - 1];
-                topleft = (topEdge || leftEdge) ? 0 : cells[row - 1][col - 1];
+                if (WRAP) {
+                    toprow = row ? row - 1 : rows - 1;
+                    botrow = row + 1 < rows ? row + 1 : 0;
+                    rightcol = col + 1 < cols ? col + 1 : 0;
+                    leftcol = col ? col - 1 : cols - 1;
+                    top = cells[toprow][col];
+                    topright = cells[toprow][rightcol];
+                    right = cells[row][rightcol];
+                    botright = cells[botrow][rightcol];
+                    bottom = cells[botrow][col];
+                    botleft = cells[botrow][leftcol];
+                    left = cells[row][leftcol];
+                    topleft = cells[toprow][leftcol];
+
+                } else {
+                    //set out-of-bounds to 0
+                    top = topEdge ? 0 : cells[row - 1][col];
+                    topright = (topEdge || rightEdge) ? 0 : cells[row - 1][col + 1];
+                    right = rightEdge ? 0 : cells[row][col + 1];
+                    botright = (botEdge || rightEdge) ? 0 : cells[row + 1][col + 1];
+                    bottom = botEdge ? 0 : cells[row + 1][col];
+                    botleft = (botEdge || leftEdge) ? 0 : cells[row + 1][col - 1];
+                    left = leftEdge ? 0 : cells[row][col - 1];
+                    topleft = (topEdge || leftEdge) ? 0 : cells[row - 1][col - 1];
+
+                }
 
                 newCells[row][col] = applyRule(cells[row][col], [top, topright, right, botright, bottom, botleft, left, topleft]);
             }
@@ -256,7 +262,13 @@
             };
             patterns_img.src = "parser/data_o.png";
         },
-
+        renderPageLinks: function () {
+            var i, html = "";
+            for (i = 0; i < numPages; i++) {
+                html += "<a href='#' class='" + (i === curPage ? "active" : "") + "'onclick='LIFE.showPage(" + i + ");return false;'>" + (i + 1) + "</a>\n";
+            }
+            document.getElementById("pages_nav").innerHTML = html;
+        },
         makeThumbnails: function (t_width, t_height, page) {
             var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = document.getElementById("thumbnails"),
                 ctx = canvasEl.getContext("2d"),
@@ -272,6 +284,7 @@
 
             curPage = page === undefined ? 0 : page;
             numPages = Math.ceil(numPatterns / (t_cols * t_rows));
+            this.renderPageLinks();
             t_canvas = canvasEl;
 
             canvasEl.setAttribute("width", c_width + "px");
@@ -338,6 +351,9 @@
 
         showPrev: function () {
             this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, curPage ? curPage - 1 : numPages - 1);
+        },
+        showPage: function (n) {
+            this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, n);
         }
 
     };

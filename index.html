@@ -38,6 +38,9 @@
       a:active {
         color: red;
       }
+      a.active {
+        color: red;
+      }
       #seed_form #seed_text {
         display:none;
         background-color: black;
@@ -72,8 +75,9 @@
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
         </td>
         <td align="left">
-          <a href="#" id="thumbnails_prev_btn" onclick="LIFE.showPrev()"> &lt;&lt; PREV</a> &nbsp;|&nbsp;
-          <a href="#" id="thumbnails_next_btn" onclick="LIFE.showNext()">NEXT &gt;&gt;</a>
+          <a href="#" id="thumbnails_prev_btn" onclick="LIFE.showPrev();return false">&lt;&lt;</a>
+          <span id="pages_nav"></span>
+          <a href="#" id="thumbnails_next_btn" onclick="LIFE.showNext();return false">&gt;&gt;</a>
           <div id="thumbnails_holder">
               <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
           </div>
