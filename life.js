@@ -274,6 +274,7 @@
                 ctx = canvasEl.getContext("2d"),
                 numPatterns = patterns.length,
                 space = 5,
+                tooltip,
                 //determine how many cols can be fit in the available space
                 //TODO: consider if not enough space is available for even one
                 //the game area should be reduced to allow size for it
@@ -319,6 +320,21 @@
 
             var that = this;
 
+            function findPos(obj) {
+                var curleft = 0,
+                    curtop = 0;
+                if (obj.offsetParent) {
+                    do {
+                        curleft += obj.offsetLeft;
+                        curtop += obj.offsetTop;
+                    } while (Boolean(obj = obj.offsetParent));
+                    return [curleft, curtop];
+                }
+            }
+
+            function getEventPos(e) {}
+
+
             function processClick(event) {
                 var node = event.target;
                 var x = event.clientX;
@@ -337,7 +353,36 @@
 
             }
 
+            function onThumbnailsHover(event) {
+
+                var node = event.target;
+                var pos = findPos(node);
+                var x = event.clientX - pos[0];
+                var y = event.clientY - pos[1];
+                console.log(curPage);
+                var col = Math.floor(x / (t_width + space));
+                var row = Math.floor(y / (t_height + space));
+                var idx = (curPage * t_rows * t_cols) + (col * t_rows) + row;
+                if (idx < patterns.length) {
+                    //insert tooltip
+                    if (!tooltip) {
+                        tooltip = document.createElement("div");
+                        tooltip.setAttribute('class', 'tooltip');
+                        document.body.appendChild(tooltip);
+                        t_canvas.addEventListener('mouseout', function () {
+                            tooltip.style.display = "none";
+                        }, false);
+                    }
+                    tooltip.style.display = "block";
+                    tooltip.style.left = pos[0] + 8 + x + "px";
+                    tooltip.style.top = pos[1] + 15 + y + "px";
+                    tooltip.innerHTML = patterns[idx].name;
+                }
+
+            }
+
             t_canvas.addEventListener('click', processClick, false);
+            t_canvas.addEventListener('mousemove', onThumbnailsHover, false);
         },
 
 
