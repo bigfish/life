@@ -238,9 +238,8 @@
                             if (r < rows - 1) {
                                 pattern_str += "\n";
                             }
-
                         }
-                        options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
+                        //options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
                         //add to patterns collection
                         patterns.push({
                             name: METADATA[o],
@@ -249,10 +248,12 @@
                             data: pattern_str
                         });
                     }
-                    menu.innerHTML = options.join("");
-                    menu.onchange = function () {
+                    //menu.innerHTML = options.join("");
+/*menu.onchange = function () {
                         textArea.value = menu.options[menu.selectedIndex].value;
-                    };
+                        that.insert_seed(document.getElementById('seed_text').value);
+                    };*/
+
                     that.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
                 };
                 metadata_img.src = "parser/metadata_o.png";

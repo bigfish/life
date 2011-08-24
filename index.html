@@ -47,15 +47,19 @@
         color: white;
         font-family: Courier, monospace;
       }
+      #thumbnails_controls {
+        margin-bottom: 5px;
+      }
       #thumbnails_holder {
         height: 100%;
         overflow: auto;
       }
       .tooltip {
         position:absolute;
-        background: #333333;
+        background: #000;
         border: 1px solid yellow;
         color: yellow;
+        padding: 5px;
         z-index: 100;
       }
 
@@ -68,9 +72,6 @@
         <td valign="top">
           <form id="seed_form">
             <div id="controls" >
-              LIFE FORMS:
-              <select id="patterns"></select>
-              <a class="button"  href="#" onclick="LIFE.insert_seed(document.getElementById('seed_text').value)">INSERT</a>
               <a href="#" onclick="LIFE.start();return false" >START</a>&nbsp;
               <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
               <a href="#" onclick="LIFE.step();return false" >STEP</a>&nbsp;
@@ -81,13 +82,17 @@
           </form>
             <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
         </td>
-        <td align="left">
-          <a href="#" id="thumbnails_prev_btn" onclick="LIFE.showPrev();return false">&lt;&lt;</a>
-          <span id="pages_nav"></span>
-          <a href="#" id="thumbnails_next_btn" onclick="LIFE.showNext();return false">&gt;&gt;</a>
-          <div id="thumbnails_holder">
-              <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-          </div>
+        <td align="left" valign="top">
+              <!--<select id="patterns"></select>-->
+            <div id="thumbnails_controls">
+                LIFE FORMS:
+              <a href="#" id="thumbnails_prev_btn" onclick="LIFE.showPrev();return false">&lt;&lt;</a>
+              <span id="pages_nav"></span>
+              <a href="#" id="thumbnails_next_btn" onclick="LIFE.showNext();return false">&gt;&gt;</a>
+            </div>
+            <div id="thumbnails_holder">
+                <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+            </div>
         </td>
       </tr>
     </table>
