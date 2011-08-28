@@ -175,8 +175,8 @@
         insert_seed: function (seedText) {
             var line, r, c;
             var lines = seedText.split('\n');
-            var row_offset = 30;
-            var col_offset = 30;
+            var row_offset = Math.floor(rows / 2) - Math.floor(lines.length / 2);
+            var col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
@@ -384,6 +384,19 @@
 
             t_canvas.addEventListener('click', processClick, false);
             t_canvas.addEventListener('mousemove', onThumbnailsHover, false);
+            document.onkeypress = function (e) {
+                console.log(e.keyCode);
+                if (e.keyCode === 13) { //return => clear
+                    if (timer) {
+                        that.stop();
+                    } else {
+                        that.start();
+                    }
+                }
+                if (e.keyCode === 32) { //space => pause / play 
+                    that.reset();
+                }
+            };
         },
 
 

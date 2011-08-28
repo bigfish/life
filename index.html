@@ -71,7 +71,8 @@
       <tr>
         <td valign="top">
           <form id="seed_form">
-            <div id="controls" >
+            <div id="controls" >LIFE PLAYER:
+
               <a href="#" onclick="LIFE.start();return false" >START</a>&nbsp;
               <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
               <a href="#" onclick="LIFE.step();return false" >STEP</a>&nbsp;
@@ -96,7 +97,7 @@
         </td>
       </tr>
     </table>
-    <script src="life.js" ></script>
+    <script src="life-ugly.js" ></script>
     <script>
       LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
       LIFE.loadPatterns(document.getElementById("patterns"), document.getElementById("seed_text"));
