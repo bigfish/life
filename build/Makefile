@@ -4,8 +4,11 @@ PNGS := data.png metadata.png life_png
 OPTIMIZED_PNGS := data_o.png metadata_o.png life_o.png
 INCLUDE_STATIC_LIFEFORMS := false
 
-all: life_o.png patterns.js data.png data_o.png results verify
+all: loader_ugly.js life_o.png patterns.js data.png data_o.png results verify
 .PHONY: all
+
+loader_ugly.js:	../loader.js
+	@uglifyjs -o loader_ugly.js ../loader.js
 
 life_o.png:	../life.js txt2png.js
 	@echo "compressing life.js"
