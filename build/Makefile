@@ -33,7 +33,7 @@ data_o.png:	data.png metadata.png
 results:
 	@getK.sh
 
-verify:
+verify: txt2png.js
 	@node verify.js "patterns_filtered.js"
 	
 

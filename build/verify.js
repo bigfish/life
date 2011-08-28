@@ -7,19 +7,20 @@
 var fs = require("fs");
 var Canvas = require("canvas");
 var patterns_file = "patterns.js";
+var txt2png = require("./txt2png.js");
 
 //use patterns file if provided as argument
 if (process.argv.length === 3) {
     patterns_file = process.argv[2];
 }
 var patternData = fs.readFileSync(patterns_file, 'UTF-8');
-var metaData = fs.readFileSync("metadata.js", "UTF-8");
 
 var img = new Canvas.Image();
 img.onerror = function (err) {
     throw err;
 };
 
+//var metaData = fs.readFileSync("metadata.js", "UTF-8");
 img.onload = function () {
     var width = img.width,
         height = img.height,
@@ -35,32 +36,34 @@ img.onload = function () {
     for (i = 0; i < data.length; i += 4) {
         patterns_str += data[i] ? "." : "O";
     }
-    //load the metadata
-    var img2 = new Canvas.Image();
-    img2.onerror = function (err) {
-        throw err;
-    };
-    img2.onload = function () {
-        var width = img2.width,
-            height = img2.height,
-            canvas = new Canvas(width, height),
-            ctx = canvas.getContext('2d');
+    //verify the metadata
+    txt2png.verify("metadata.js", "metadata_o.png", function (verified, metadata_str) {
+        var p;
+/*var img2 = new Canvas.Image();
+        img2.onerror = function (err) {
+            throw err;
+        };
+        img2.onload = function () {
+            var width = img2.width,
+                height = img2.height,
+                canvas = new Canvas(width, height),
+                ctx = canvas.getContext('2d');
 
-        ctx.drawImage(img2, 0, 0, width, height);
+            ctx.drawImage(img2, 0, 0, width, height);
 
-        var imagedata = ctx.getImageData(0, 0, width, height);
-        var data = imagedata.data;
-        var i, p, char, metadata_str = "";
-        for (i = 0; i < data.length; i += 4) {
-            char = String.fromCharCode(data[i]);
-            metadata_str += char;
-        }
-        metadata_str = metadata_str.trim();
-        if (metaData === metadata_str) {
-            console.log("verified metadata");
-        } else {
-            console.log("WARNING: metadata was corrupted");
-        }
+            var imagedata = ctx.getImageData(0, 0, width, height);
+            var data = imagedata.data;
+            var i, p, char, metadata_str = "";
+            for (i = 0; i < data.length; i += 4) {
+                char = String.fromCharCode(data[i]);
+                metadata_str += char;
+            }
+            metadata_str = metadata_str.trim();
+            if (metaData === metadata_str) {
+                console.log("verified metadata");
+            } else {
+                console.log("WARNING: metadata was corrupted");
+            }*/
         //now reconstruct the patterns.js data
         eval(metadata_str);
         var rows, rowstr, r, cols, start, patLines;
@@ -94,8 +97,8 @@ img.onload = function () {
             }
         }
         //console.log(result);
-    };
-    img2.src = "metadata_o.png";
+    });
+    //img2.src = "metadata_o.png";
 };
-
+//});
 img.src = "data_o.png";

@@ -49,8 +49,47 @@ function convert(txt_file, png_file) {
 
 }
 
+function verify(txt_file, png_file, onVerifyComplete) {
+
+    var img = new Canvas.Image(),
+        originalText = fs.readFileSync(txt_file, "UTF-8");
+
+    img.onerror = function (err) {
+        throw err;
+    };
+    img.onload = function () {
+        var imagedata, data, i, p, char, decodedText = "",
+            width = img.width,
+            height = img.height,
+            canvas = new Canvas(width, height),
+            ctx = canvas.getContext('2d');
+
+        ctx.drawImage(img, 0, 0, width, height);
+        imagedata = ctx.getImageData(0, 0, width, height);
+        data = imagedata.data;
+
+        for (i = 0; i < data.length; i += 4) {
+            char = String.fromCharCode(data[i]);
+            decodedText += char;
+        }
+        decodedText = decodedText.trim();
+        if (originalText === decodedText) {
+            console.log("verified " + png_file);
+            onVerifyComplete(true, originalText);
+        } else {
+            console.log("WARNING: " + png_file + "was corrupted");
+            onVerifyComplete(false, originalText, decodedText);
+        }
+    };
+
+    img.src = png_file;
+
+}
+
 //CLI usage
 if (process.argv.length === 4) {
     convert(process.argv[2], process.argv[3]);
+    verify(process.argv[2], process.argv[3]);
 }
 exports.convert = convert;
+exports.verify = verify;
