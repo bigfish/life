@@ -1,15 +1,21 @@
 #!/bin/bash
 LEXICON := lexicon.htm
-PNGS := data.png metadata.png 
-OPTIMIZED_PNGS := data_o.png metadata_o.png
+PNGS := data.png metadata.png life_png
+OPTIMIZED_PNGS := data_o.png metadata_o.png life_o.png
 INCLUDE_STATIC_LIFEFORMS := false
 
-all: patterns.js data.png data_o.png results verify
+all: life_o.png patterns.js data.png data_o.png results verify
 .PHONY: all
 
+life_o.png:	../life.js txt2png.js
+	@echo "compressing life.js"
+	@rm -f life_ugly.js life.png > /dev/null 2>&1
+	@uglifyjs -o life_ugly.js ../life.js
+	@node txt2png.js life_ugly.js life.png
+
 patterns.js:	$(LEXICON) parse.js
+	@echo "parsing lexicon"
 	@node parse.js $(LEXICON)
-	echo "parsing lexicon"
 
 #filter out the lifeforms which do not move
 patterns_filtered.js:	patterns.js filter.js
@@ -23,9 +29,10 @@ data.png:	patterns_filtered.js generate.js txt2png.js
 	@node generate.js patterns_filtered.js 
 
 #post-process images to compress
-data_o.png:	data.png metadata.png
+data_o.png:	data.png metadata.png life.png
 	@echo "compressing png files"
 	@rm -f $(OPTIMIZED_PNGS) > /dev/null 2>&1
+	@optipng -quiet -out life_o.png life.png
 	@optipng -quiet -out data_o.png data.png
 	@optipng -quiet -out metadata_o.png -fix metadata.png
 

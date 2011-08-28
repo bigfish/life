@@ -10,8 +10,59 @@
  */
 var fs = require("fs");
 var Canvas = require("canvas");
+var CanvasImage = Canvas.Image;
 
-function convert(txt_file, png_file) {
+function verify(txt_file, png_file, onVerifyComplete) {
+
+    var img = new CanvasImage(),
+        originalText = fs.readFileSync(txt_file, "UTF-8");
+
+    originalText = originalText.trim();
+
+    img.onerror = function (err) {
+        throw err;
+    };
+    img.onload = function () {
+        var imagedata, verified, data, i, p, char, decodedText = "",
+            width = img.width,
+            height = img.height,
+            canvas = new Canvas(width, height),
+            ctx = canvas.getContext('2d');
+
+        ctx.drawImage(img, 0, 0, width, height);
+        imagedata = ctx.getImageData(0, 0, width, height);
+        data = imagedata.data;
+
+        for (i = 0; i < data.length; i += 4) {
+            char = String.fromCharCode(data[i]);
+            decodedText += char;
+        }
+        decodedText = decodedText.trim();
+        if (originalText === decodedText) {
+            console.log("verified " + png_file);
+            verified = true;
+        } else {
+            console.log("WARNING: " + png_file + "was corrupted");
+            for (i = 0; i < originalText.length; i++) {
+                if (decodedText.charAt(i) !== originalText.charAt(i)) {
+                    console.log("difference at " + i, originalText.charAt(i), decodedText.charAt(i));
+                    console.log(originalText.substring(i - 20, i + 20));
+                    console.log(decodedText.substring(i - 20, i + 40));
+                    break;
+                }
+            }
+            verified = false;
+        }
+        if (typeof onVerifyComplete === "function") {
+            onVerifyComplete(verified, originalText, data);
+        }
+    };
+
+    img.src = png_file;
+
+}
+
+function convert(txt_file, png_file, onComplete) {
     var canvas, ctx, imgSize, i, n, charIdx, charCode, row, col, txt_file_text, space = 'rgba(32,32,32,1)';
     //read file into string
     txt_file_text = fs.readFileSync(txt_file, 'UTF-8');
@@ -36,7 +87,8 @@ function convert(txt_file, png_file) {
     }
 
     //write png
-    var out = fs.createWriteStream(__dirname + '/' + png_file),
+    //var out = fs.createWriteStream(__dirname + '/' + png_file),
+    var out = fs.createWriteStream(png_file),
         stream = canvas.createPNGStream();
 
     stream.on('data', function (chunk) {
@@ -44,52 +96,22 @@ function convert(txt_file, png_file) {
     });
 
     stream.on('end', function () {
-        console.log('saved metadata.png');
+        //there was a problem with the image not being readable yet
+        //worked around this with a short timeout
+        setTimeout(function () {
+            verify(txt_file, png_file, onComplete);
+        }, 100);
     });
-
-}
-
-function verify(txt_file, png_file, onVerifyComplete) {
-
-    var img = new Canvas.Image(),
-        originalText = fs.readFileSync(txt_file, "UTF-8");
-
-    img.onerror = function (err) {
-        throw err;
-    };
-    img.onload = function () {
-        var imagedata, data, i, p, char, decodedText = "",
-            width = img.width,
-            height = img.height,
-            canvas = new Canvas(width, height),
-            ctx = canvas.getContext('2d');
-
-        ctx.drawImage(img, 0, 0, width, height);
-        imagedata = ctx.getImageData(0, 0, width, height);
-        data = imagedata.data;
-
-        for (i = 0; i < data.length; i += 4) {
-            char = String.fromCharCode(data[i]);
-            decodedText += char;
-        }
-        decodedText = decodedText.trim();
-        if (originalText === decodedText) {
-            console.log("verified " + png_file);
-            onVerifyComplete(true, originalText);
-        } else {
-            console.log("WARNING: " + png_file + "was corrupted");
-            onVerifyComplete(false, originalText, decodedText);
-        }
-    };
-
-    img.src = png_file;
 
 }
 
 //CLI usage
 if (process.argv.length === 4) {
-    convert(process.argv[2], process.argv[3]);
-    verify(process.argv[2], process.argv[3]);
+    var inputTextFile = process.argv[2];
+    var outputImage = process.argv[3];
+    convert(inputTextFile, outputImage, function () {
+        console.log("converted " + inputTextFile);
+    });
 }
 exports.convert = convert;
 exports.verify = verify;
