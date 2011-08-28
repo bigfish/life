@@ -4,7 +4,7 @@
  * output: metadata.js, metadata.png, data.png
  */
 var fs = require("fs");
-var txt2png = require("txt2png");
+var txt2png = require("./txt2png.js");
 var Canvas = require("canvas");
 var patterns_file = "patterns.js";
 //use patterns file if provided as argument
@@ -44,40 +44,9 @@ var metadata_str = "METADATA=" + JSON.stringify(metadata) + ";";
 fs.writeFileSync("metadata.js", metadata_str);
 
 txt2png.convert("metadata.js", "metadata.png");
-//generate 8-bit metadata.png using metadata.js converted from ASCII to 0-255
-/*var imgSize = Math.ceil(Math.sqrt(metadata_str.length));
-var canvas = new Canvas(imgSize, imgSize);
-var ctx = canvas.getContext("2d");
-var col;
-var i, n, charIdx, charCode;
-var space = 'rgba(32,32,32,1)';
-var row, col;
-ctx.fillStyle = space;
-ctx.fillRect(0, 0, imgSize, imgSize);*/
-
-// set color to ascii value of corresponding char
-/*for (i = 0; i < metadata_str.length; i++) {
-    charCode = metadata_str.charCodeAt(i);
-    ctx.fillStyle = 'rgba(' + charCode + ',' + charCode + ',' + charCode + ',1)';
-    row = Math.floor(i / imgSize);
-    col = i % imgSize;
-    //console.log(col, row, charCode);
-    ctx.fillRect(col, row, 1, 1);
-}*/
-
-//write png
-/*var out = fs.createWriteStream(__dirname + '/metadata.png'),
-    stream = canvas.createPNGStream();
-
-stream.on('data', function (chunk) {
-    out.write(chunk);
-});
-
-stream.on('end', function () {
-    console.log('saved metadata.png');
-});*/
 
 //generate data.png image with pattern data as black & white pixels
+//this is a bit custom as it generates a 2bit image
 imgSize = Math.ceil(Math.sqrt(pixbuf.length));
 canvas = new Canvas(imgSize, imgSize);
 ctx = canvas.getContext("2d");

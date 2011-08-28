@@ -17,7 +17,7 @@ patterns_filtered.js:	patterns.js filter.js
 	@node filter.js $(INCLUDE_STATIC_LIFEFORMS)
 
 #generate metadata.png and data.png (image-encoded pattern data)
-data.png:	patterns_filtered.js
+data.png:	patterns_filtered.js generate.js txt2png.js
 	@echo "generating png files"
 	@rm -f $(PNGS) > /dev/null 2>&1
 	@node generate.js patterns_filtered.js 
