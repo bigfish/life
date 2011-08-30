@@ -6,22 +6,13 @@
     <link rel="stylesheet" href="lifestyles.css">
   </head>
   <body >
-    <div id="player">
-      <div id="controls" ></div>
         <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
       <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-    </div>
+      <div id="controls" ></div>
       <div id="forms" >
           <!--<select id="patterns"></select>-->
-        <div id="thumbnails_controls">
-            LIFE FORMS:
-          <a href="#" id="thumbnails_prev_btn" onclick="life.showPrev();return false">&lt;&lt;</a>
-          <span id="pages_nav"></span>
-          <a href="#" id="thumbnails_next_btn" onclick="life.showNext();return false">&gt;&gt;</a>
-        </div>
-        <div id="thumbnails_holder">
-            <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-        </div>
+        <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+        <div id="thumbnails_controls"></div>
     </div>
     <script src="loader.js" ></script>
     <script src="life.js" ></script>

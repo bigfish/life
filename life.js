@@ -135,6 +135,11 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
         render();
     }
 
+    function mkBtn(cmd, label) {
+        return "<a href='#' onclick='life." + cmd + "();return false'>" + (label ? label : cmd.toUpperCase()) + "</a> ";
+    } 
+
+
     //export an object with useful methods
     return {
 
@@ -218,20 +223,22 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                 });
             });
         },
+
         renderPageLinks: function () {
             //add controls
-            var controlsHTML = "LIFE PLAYER: ";
+            var controlsHTML = "";
             var c, cmds = ["start", "stop", "step", "reset", "randomize"];
             for (c = 0; c < cmds.length; c++) {
-                controlsHTML += "<a href='#' onclick='life." + cmds[c] + "();return false'>" + cmds[c].toUpperCase() + "</a> ";
+                controlsHTML += mkBtn(cmds[c]);
             }
             $("controls").innerHTML = controlsHTML;
-
-            var i, html = "";
+            //add thumbnails nav
+            var i, html = mkBtn("showPrev", "<<");
             for (i = 0; i < numPages; i++) {
                 html += "<a href='#' class='" + (i === curPage ? "active" : "") + "'onclick='life.showPage(" + i + ");return false;'>" + (i + 1) + "</a>\n";
             }
-            $("pages_nav").innerHTML = html;
+            html += mkBtn("showNext", ">>");
+            $("thumbnails_controls").innerHTML = html;
         },
         makeThumbnails: function (t_width, t_height, page) {
             var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = $("thumbnails"),

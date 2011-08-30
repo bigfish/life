@@ -34,11 +34,7 @@
         font-family: Courier, monospace;
       }
       #thumbnails_controls {
-        margin-bottom: 5px;
-      }
-      #thumbnails_holder {
-        height: 100%;
-        overflow: auto;
+        /*margin-bottom: 5px;*/
       }
       .tooltip {
         position:absolute;
@@ -49,6 +45,6 @@
         z-index: 100;
       }
 
-      #player, #forms {
-        display:table-cell;
-      }
+      #canvas {
+          float: left
+        }
