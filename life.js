@@ -1,8 +1,10 @@
 /*jslint evil:true */
 /*globals METADATA $ LOAD_JS_FROM_PNG*/
 window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
-    var t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
+    var patterns_menu, t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
         THUMBNAIL_SIZE = 100,
+        AUTO_CLEAR = true,
+        AUTO_PLAY = true,
         WRAP = true,
         ctx = canvas.getContext("2d") || window.alert("unable to initialize canvas. Check browser support.");
     size = cellsize || 1;
@@ -18,6 +20,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
     function clear() {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = fg;
     }
 
     function reset() {
@@ -62,7 +65,6 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
     function render() {
         var row, col;
         clear();
-        ctx.fillStyle = fg;
         for (row = 0; row < rows; row++) {
             for (col = 0; col < cols; col++) {
                 if (cells[row][col]) {
@@ -75,8 +77,6 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
     function random_seed() {
         var i, row, col;
         reset();
-        //set color to fg
-        ctx.fillStyle = fg;
         //set some random pixels to be 'on' -- about a third of all pixels
         for (i = 0; i < rows * cols * 0.1; i++) {
             row = Math.floor(Math.random() * rows);
@@ -87,11 +87,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
     }
 
     function iterate() {
-        var row, col, rightcol, leftcol, top, toprow, botrow, topright, right, botright, bottom, botleft, left, topleft;
-        var topEdge = false,
-            botEdge = false,
-            leftEdge = false,
-            rightEdge = false;
+        var row, col, rightcol, leftcol, top, toprow, botrow, topright, right, botright, bottom, botleft, left, topleft, topEdge, botEdge, leftEdge, rightEdge;
         var newCells = oldCells;
         for (row = 0; row < rows; row++) {
             topEdge = (row === 0);
@@ -137,7 +133,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
 
     function mkBtn(cmd, label) {
         return "<a href='#' onclick='life." + cmd + "();return false'>" + (label ? label : cmd.toUpperCase()) + "</a> ";
-    } 
+    }
 
 
     //export an object with useful methods
@@ -166,6 +162,9 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
             var line, r, c, lines = seedText.split('\n'),
                 row_offset = Math.floor(rows / 2) - Math.floor(lines.length / 2),
                 col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
+            if (AUTO_CLEAR) {
+                reset();
+            }
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
@@ -174,6 +173,10 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                 }
             }
             render();
+            if (AUTO_PLAY) {
+                this.start();
+            }
+
         },
 
         loadPatterns: function (menu, textArea) {
@@ -181,6 +184,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                 patterns_data_text = "",
                 pattern_str = "";
             patterns = [];
+            patterns_menu = menu;
             var that = this;
             LOAD_JS_FROM_PNG("build/data_o.png", function (text, imagedata) {
                 var i, o, rows, cols, r, c, offset, options = [];
@@ -204,7 +208,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                                 pattern_str += "\n";
                             }
                         }
-                        //options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
+                        options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
                         //add to patterns collection
                         patterns.push({
                             name: METADATA[o],
@@ -213,13 +217,17 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                             data: pattern_str
                         });
                     }
-                    //menu.innerHTML = options.join("");
-/*menu.onchange = function () {
+                    menu.innerHTML = options.join("");
+                    menu.onchange = function () {
                         textArea.value = menu.options[menu.selectedIndex].value;
+                        that.reset();
                         that.insert_seed($('seed_text').value);
-                    };*/
+                    };
 
                     that.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+
+                    that.insert_seed(patterns[0].data);
+
                 });
             });
         },
@@ -240,6 +248,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
             html += mkBtn("showNext", ">>");
             $("thumbnails_controls").innerHTML = html;
         },
+
         makeThumbnails: function (t_width, t_height, page) {
             var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = $("thumbnails"),
                 ctx = canvasEl.getContext("2d"),
@@ -291,16 +300,16 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
 
             var that = this;
 
-            function findPos(obj) {
-                var curleft = 0,
-                    curtop = 0;
-                if (obj.offsetParent) {
-                    do {
-                        curleft += obj.offsetLeft;
-                        curtop += obj.offsetTop;
-                    } while (Boolean(obj = obj.offsetParent));
-                    return [curleft, curtop];
+            function getRelPos(event) {
+                var mouseX, mouseY;
+                if (event.offsetX) {
+                    mouseX = event.offsetX;
+                    mouseY = event.offsetY;
+                } else {
+                    mouseX = event.pageX - event.target.offsetLeft;
+                    mouseY = event.pageY - event.target.offsetTop;
                 }
+                return [mouseX, mouseY];
             }
 
             function processClick(event) {
@@ -317,38 +326,37 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                 idx = (curPage * t_rows * t_cols) + col * t_rows + row;
                 if (idx < patterns.length) {
                     that.insert_seed(patterns[idx].data);
+                    patterns_menu.selectedIndex = idx;
                 }
             }
 
-            function onThumbnailsHover(event) {
+            t_canvas.onmouseover = t_canvas.onmousemove = function onThumbnailsHover(event) {
 
-                var node = event.target;
-                var pos = findPos(node);
-                var x = event.clientX - pos[0];
-                var y = event.clientY - pos[1];
-                var col = Math.floor(x / (t_width + space));
-                var row = Math.floor(y / (t_height + space));
-                var idx = (curPage * t_rows * t_cols) + (col * t_rows) + row;
+                var pos = getRelPos(event),
+                    x = pos[0],
+                    y = pos[1],
+                    col = Math.floor(x / (t_width + space)),
+                    row = Math.floor(y / (t_height + space)),
+                    idx = (curPage * t_rows * t_cols) + (col * t_rows) + row;
                 if (idx < patterns.length) {
                     //insert tooltip
                     if (!tooltip) {
                         tooltip = document.createElement("div");
                         tooltip.setAttribute('class', 'tooltip');
                         document.body.appendChild(tooltip);
-                        t_canvas.addEventListener('mouseout', function () {
+                        t_canvas.onmouseout = function () {
                             tooltip.style.display = "none";
-                        }, false);
+                        };
                     }
                     tooltip.style.display = "block";
-                    tooltip.style.left = pos[0] + 8 + x + "px";
-                    tooltip.style.top = pos[1] + 15 + y + "px";
+                    tooltip.style.left = event.target.offsetLeft + 8 + x + "px";
+                    tooltip.style.top = event.target.offsetTop + 15 + y + "px";
                     tooltip.innerHTML = patterns[idx].name;
                 }
 
-            }
+            };
 
             t_canvas.addEventListener('click', processClick, false);
-            t_canvas.addEventListener('mousemove', onThumbnailsHover, false);
             document.onkeypress = function (e) {
                 console.log(e.keyCode);
                 if (e.keyCode === 13) { //return => clear
@@ -362,17 +370,26 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                     that.reset();
                 }
             };
+
         },
 
         showNext: function () {
             this.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE, curPage < numPages ? curPage + 1 : 0);
         },
-
         showPrev: function () {
             this.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE, curPage ? curPage - 1 : numPages - 1);
         },
         showPage: function (n) {
             this.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE, n);
+        },
+        setWrap: function (wrap) {
+            WRAP = wrap;
+        },
+        setAutoClear: function (ac) {
+            AUTO_CLEAR = ac;
+        },
+        setAutoPlay: function (ap) {
+            AUTO_PLAY = ap;
         }
 
     };
