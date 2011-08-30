@@ -1,10 +1,19 @@
 /*jslint evil:true */
-/*globals METADATA */
-(function () {
-    var canvas, t_canvas, ctx, fg, bg, size, timer, rows, cols, cells, oldCells, width, height, patterns, makeThumbnails, numPages, curPage;
-    var THUMBNAIL_WIDTH = 100;
-    var THUMBNAIL_HEIGHT = 100;
-    var WRAP = true;
+/*globals METADATA $ LOAD_JS_FROM_PNG*/
+window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
+    var t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
+        THUMBNAIL_SIZE = 100,
+        WRAP = true,
+        ctx = canvas.getContext("2d") || window.alert("unable to initialize canvas. Check browser support.");
+    size = cellsize || 1;
+    cells = [];
+    oldCells = [];
+
+    //set size
+    canvas.setAttribute("width", width);
+    canvas.setAttribute("height", height);
+    cols = Math.floor(width / size);
+    rows = Math.floor(height / size);
 
     function clear() {
         ctx.fillStyle = bg;
@@ -23,6 +32,8 @@
         }
         clear();
     }
+
+    reset();
 
     function applyRule(cell, neighbours) {
 
@@ -119,41 +130,15 @@
                 newCells[row][col] = applyRule(cells[row][col], [top, topright, right, botright, bottom, botleft, left, topleft]);
             }
         }
-        //oldCells
         oldCells = cells;
         cells = newCells;
         render();
     }
 
+    //export an object with useful methods
+    return {
 
-
-
-    window.LIFE = {
-
-        init: function (canvasEl, _width, _height, background, foreground, cellsize) {
-            canvas = document.getElementById(canvasEl);
-            ctx = canvas && canvas.getContext("2d");
-            fg = foreground || "#00FF00";
-            bg = background || "#000000";
-            width = _width;
-            height = _height;
-            size = cellsize || 1;
-            cells = [];
-            oldCells = [];
-
-            if (!ctx) {
-                window.alert("unable to initialize HTML Canvas. You might want to try another browser.");
-                return;
-            }
-            //set size
-            canvas.setAttribute("width", width);
-            canvas.setAttribute("height", height);
-            cols = Math.floor(width / size);
-            rows = Math.floor(height / size);
-            reset();
-        },
-
-        random_seed: random_seed,
+        randomize: random_seed,
 
         start: function () {
             if (timer) {
@@ -173,60 +158,35 @@
         reset: reset,
 
         insert_seed: function (seedText) {
-            var line, r, c;
-            var lines = seedText.split('\n');
-            var row_offset = Math.floor(rows / 2) - Math.floor(lines.length / 2);
-            var col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
+            var line, r, c, lines = seedText.split('\n'),
+                row_offset = Math.floor(rows / 2) - Math.floor(lines.length / 2),
+                col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
                 for (c = 0; c < line.length; c++) {
-                    if (line[c] === '.') {
-                        cells[r + row_offset][c + col_offset] = 0;
-                    } else {
-                        cells[r + row_offset][c + col_offset] = 1;
-                    }
+                    cells[r + row_offset][c + col_offset] = (line[c] === '.') ? 0 : 1;
                 }
             }
             render();
         },
 
         loadPatterns: function (menu, textArea) {
-            var patterns_img = new Image(),
-                metadata_img = new Image(),
-                canvas = document.createElement('canvas'),
-                ctx = canvas.getContext("2d"),
-                patterns_data = [],
+            var patterns_data = [],
                 patterns_data_text = "",
-                pattern_str = "",
-                patterns_metadata = [],
-                patterns_metadata_text = "";
+                pattern_str = "";
             patterns = [];
             var that = this;
-            patterns_img.onload = function () {
-                var i, o, imagedata, rows, cols, r, c, offset, options = [],
-                    width = patterns_img.width,
-                    height = patterns_img.height;
-                canvas.setAttribute("width", width + "px");
-                canvas.setAttribute("height", height + "px");
-                ctx.drawImage(patterns_img, 0, 0, width, height);
-                imagedata = ctx.getImageData(0, 0, width, height).data;
+            LOAD_JS_FROM_PNG("build/data_o.png", function (text, imagedata) {
+                var i, o, rows, cols, r, c, offset, options = [];
+                //normalize the binary format used for compression to usable characters '.' or 'O'
                 for (i = 0; i < imagedata.length; i += 4) {
                     patterns_data.push(imagedata[i] ? '.' : 'O');
                 }
                 patterns_data_text = patterns_data.join("");
                 //load metadata
-                metadata_img.onload = function () {
-                    width = metadata_img.width;
-                    height = metadata_img.height;
-                    canvas.setAttribute("width", width + "px");
-                    canvas.setAttribute("height", height + "px");
-                    ctx.drawImage(metadata_img, 0, 0, width, height);
-                    imagedata = ctx.getImageData(0, 0, width, height).data;
-                    for (i = 0; i < imagedata.length; i += 4) {
-                        patterns_metadata.push(String.fromCharCode(imagedata[i]));
-                    }
-                    eval(patterns_metadata.join(""));
+                LOAD_JS_FROM_PNG("build/metadata_o.png", function (js_str) {
+                    eval(js_str);
                     //construct options for menu
                     for (o = 0; o < METADATA.length; o += 4) {
                         pattern_str = "";
@@ -251,27 +211,30 @@
                     //menu.innerHTML = options.join("");
 /*menu.onchange = function () {
                         textArea.value = menu.options[menu.selectedIndex].value;
-                        that.insert_seed(document.getElementById('seed_text').value);
+                        that.insert_seed($('seed_text').value);
                     };*/
 
-                    that.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
-                };
-                metadata_img.src = "parser/metadata_o.png";
-            };
-            patterns_img.onerror = function () {
-                console.log("failed to load patterns data image");
-            };
-            patterns_img.src = "parser/data_o.png";
+                    that.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+                });
+            });
         },
         renderPageLinks: function () {
+            //add controls
+            var controlsHTML = "LIFE PLAYER: ";
+            var c, cmds = ["start", "stop", "step", "reset", "randomize"];
+            for (c = 0; c < cmds.length; c++) {
+                controlsHTML += "<a href='#' onclick='life." + cmds[c] + "();return false'>" + cmds[c].toUpperCase() + "</a> ";
+            }
+            $("controls").innerHTML = controlsHTML;
+
             var i, html = "";
             for (i = 0; i < numPages; i++) {
-                html += "<a href='#' class='" + (i === curPage ? "active" : "") + "'onclick='LIFE.showPage(" + i + ");return false;'>" + (i + 1) + "</a>\n";
+                html += "<a href='#' class='" + (i === curPage ? "active" : "") + "'onclick='life.showPage(" + i + ");return false;'>" + (i + 1) + "</a>\n";
             }
-            document.getElementById("pages_nav").innerHTML = html;
+            $("pages_nav").innerHTML = html;
         },
         makeThumbnails: function (t_width, t_height, page) {
-            var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = document.getElementById("thumbnails"),
+            var p, pattern, c, r, scale_x, scale_y, rows, canvasEl = $("thumbnails"),
                 ctx = canvasEl.getContext("2d"),
                 numPatterns = patterns.length,
                 space = 5,
@@ -333,25 +296,21 @@
                 }
             }
 
-            function getEventPos(e) {}
-
-
             function processClick(event) {
-                var node = event.target;
-                var x = event.clientX;
-                var y = event.clientY;
+                var col, row, idx, node = event.target,
+                    x = event.clientX,
+                    y = event.clientY;
                 while (node) {
                     x -= node.offsetLeft - node.scrollLeft;
                     y -= node.offsetTop - node.scrollTop;
                     node = node.offsetParent;
                 }
-                var col = Math.floor((event.target.parentNode.scrollLeft + x) / (t_width + space));
-                var row = Math.floor((event.target.parentNode.scrollTop + y) / (t_height + space));
-                var idx = (curPage * t_rows * t_cols) + col * t_rows + row;
+                col = Math.floor((event.target.parentNode.scrollLeft + x) / (t_width + space));
+                row = Math.floor((event.target.parentNode.scrollTop + y) / (t_height + space));
+                idx = (curPage * t_rows * t_cols) + col * t_rows + row;
                 if (idx < patterns.length) {
                     that.insert_seed(patterns[idx].data);
                 }
-
             }
 
             function onThumbnailsHover(event) {
@@ -360,7 +319,6 @@
                 var pos = findPos(node);
                 var x = event.clientX - pos[0];
                 var y = event.clientY - pos[1];
-                console.log(curPage);
                 var col = Math.floor(x / (t_width + space));
                 var row = Math.floor(y / (t_height + space));
                 var idx = (curPage * t_rows * t_cols) + (col * t_rows) + row;
@@ -399,23 +357,18 @@
             };
         },
 
-
-        saveThumbnails: function () {
-            document.write("<img src='" + t_canvas.toDataURL("image/png") + "' >");
-        },
-
         showNext: function () {
-            this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, curPage < numPages ? curPage + 1 : 0);
+            this.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE, curPage < numPages ? curPage + 1 : 0);
         },
 
         showPrev: function () {
-            this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, curPage ? curPage - 1 : numPages - 1);
+            this.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE, curPage ? curPage - 1 : numPages - 1);
         },
         showPage: function (n) {
-            this.makeThumbnails(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, n);
+            this.makeThumbnails(THUMBNAIL_SIZE, THUMBNAIL_SIZE, n);
         }
 
     };
 
 
-}());
+};

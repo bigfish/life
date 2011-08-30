@@ -3,100 +3,33 @@
   <head>
     <meta charset="utf-8">
     <title>LIFE:Forms</title>
-    <style>
-      body {
-        color:#CCC;
-        background-color: black;
-        font-family:Verdana,Arial,Helvetica,sans-serif;
-        font-size: 0.8em;
-        margin:0;
-      }
-      h1 {
-        position:absolute;
-        font-weight:normal;
-        margin:0;
-        padding:0 0 0 5px;
-      }
-      h3 {
-        text-align:center;
-      }
-      #game {
-        float: left;
-      }
-      #lexicon {
-        border: 0;
-        margin: 0;
-        height: 600px;
-      }
-      #controls {
-        margin-bottom: 5px;
-      }
-      a, a:visited {
-        text-decoration:none;
-        color: yellow;
-      }
-      a:active {
-        color: red;
-      }
-      a.active {
-        color: red;
-      }
-      #seed_form #seed_text {
-        display:none;
-        background-color: black;
-        color: white;
-        font-family: Courier, monospace;
-      }
-      #thumbnails_controls {
-        margin-bottom: 5px;
-      }
-      #thumbnails_holder {
-        height: 100%;
-        overflow: auto;
-      }
-      .tooltip {
-        position:absolute;
-        background: #000;
-        border: 1px solid yellow;
-        color: yellow;
-        padding: 5px;
-        z-index: 100;
-      }
-
-    </style>
+    <link rel="stylesheet" href="lifestyles.css">
   </head>
   <body >
-    <!--<h1>LIFE:Forms</h1>-->
-    <table height="100%" width="100%" cellpadding=5>
-      <tr>
-        <td valign="top">
-          <form id="seed_form">
-            <div id="controls" >LIFE PLAYER:
-
-              <a href="#" onclick="LIFE.start();return false" >START</a>&nbsp;
-              <a href="#" onclick="LIFE.stop();return false" >STOP</a>&nbsp;
-              <a href="#" onclick="LIFE.step();return false" >STEP</a>&nbsp;
-              <a href="#" onclick="LIFE.reset();return false" >RESET</a>&nbsp;
-              <a href="#" onclick="LIFE.random_seed();return false" >RANDOM</a>&nbsp;
-            </div>
-              <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
-          </form>
-            <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-        </td>
-        <td align="left" valign="top">
-              <!--<select id="patterns"></select>-->
-            <div id="thumbnails_controls">
-                LIFE FORMS:
-              <a href="#" id="thumbnails_prev_btn" onclick="LIFE.showPrev();return false">&lt;&lt;</a>
-              <span id="pages_nav"></span>
-              <a href="#" id="thumbnails_next_btn" onclick="LIFE.showNext();return false">&gt;&gt;</a>
-            </div>
-            <div id="thumbnails_holder">
-                <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
-            </div>
-        </td>
-      </tr>
-    </table>
-    <script src="./build/loader_ugly.js" ></script>
+    <div id="player">
+      <div id="controls" ></div>
+        <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
+      <canvas id="canvas">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+    </div>
+      <div id="forms" >
+          <!--<select id="patterns"></select>-->
+        <div id="thumbnails_controls">
+            LIFE FORMS:
+          <a href="#" id="thumbnails_prev_btn" onclick="life.showPrev();return false">&lt;&lt;</a>
+          <span id="pages_nav"></span>
+          <a href="#" id="thumbnails_next_btn" onclick="life.showNext();return false">&gt;&gt;</a>
+        </div>
+        <div id="thumbnails_holder">
+            <canvas id="thumbnails">Sorry, your browser does not support canvas. Please upgrade.</canvas>
+        </div>
+    </div>
+    <script src="loader.js" ></script>
+    <script src="life.js" ></script>
+    <script>
+    $ = function (id) { return document.getElementById(id); };
+    var life = LIFE($("canvas"), 600, 600, "#000000", "#00FF00", 4);
+    life.loadPatterns($("patterns"), $("seed_text"));
+    </script>
+    <!--<script src="./build/loader_ugly.js" ></script>-->
   </body>
 </html>

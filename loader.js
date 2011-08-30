@@ -2,7 +2,7 @@
 /*global LIFE LOAD_JS_FROM_PNG*/
 //load the life_o.png image and extract the javascript code from it
 window.LOAD_JS_FROM_PNG = function (png, onLoad) {
-    var width, height, imagedata, i, o, js = [],
+    var width, height, imagedata, i, o, result, js = [],
         img = new Image(),
         canvas = document.createElement('canvas'),
         ctx = canvas.getContext("2d");
@@ -19,14 +19,16 @@ window.LOAD_JS_FROM_PNG = function (png, onLoad) {
         for (i = 0; i < imagedata.length; i += 4) {
             js.push(String.fromCharCode(imagedata[i]));
         }
-        eval(js.join(""));
-        onLoad();
+        result = js.join("");
+        //eval(result);
+        onLoad(result, imagedata);
 
     };
     img.src = png;
 };
-
-LOAD_JS_FROM_PNG("build/life_o.png", function () {
+//dev
+//production
+/*LOAD_JS_FROM_PNG("build/life_o.png", function () {
     LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
     LIFE.loadPatterns(document.getElementById("patterns"), document.getElementById("seed_text"));
-});
+});*/
