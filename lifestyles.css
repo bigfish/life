@@ -5,31 +5,27 @@
         font-size: 0.8em;
         margin:0;
       }
-      h1 {
-        position:absolute;
-        font-weight:normal;
-        margin:0;
-        padding:0 0 0 5px;
-      }
-      h3 {
-        text-align:center;
-      }
       a, a:visited {
         text-decoration:none;
         color: yellow;
       }
-      a:active {
+      a:active, a.active {
         color: red;
       }
-      a.active {
-        color: red;
-      }
-      #seed_text {
+      #editor {
+        position:absolute;
+        z-index: 200;
         display:none;
         background-color: black;
         color: white;
         font-family: Courier, monospace;
       }
+      #editor #seed_text {
+          display: block;
+        background-color: black;
+        color: white;
+        font-family: Courier, monospace;
+    }
       #thumbnails_controls {
         /*margin-bottom: 5px;*/
       }

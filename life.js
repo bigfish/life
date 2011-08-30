@@ -1,7 +1,7 @@
 /*jslint evil:true */
 /*globals METADATA $ LOAD_JS_FROM_PNG*/
 window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
-    var patterns_menu, t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
+    var editor, patterns_menu, seed_textarea, t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
         THUMBNAIL_SIZE = 100,
         AUTO_CLEAR = true,
         AUTO_PLAY = true,
@@ -165,6 +165,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
             if (AUTO_CLEAR) {
                 reset();
             }
+            seed_textarea.value = seedText;
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
@@ -179,12 +180,14 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
 
         },
 
-        loadPatterns: function (menu, textArea) {
+        loadPatterns: function (menu, textArea, ed) {
             var patterns_data = [],
                 patterns_data_text = "",
                 pattern_str = "";
+            editor = ed;
             patterns = [];
             patterns_menu = menu;
+            seed_textarea = textArea;
             var that = this;
             LOAD_JS_FROM_PNG("build/data_o.png", function (text, imagedata) {
                 var i, o, rows, cols, r, c, offset, options = [];
@@ -219,8 +222,8 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                     }
                     menu.innerHTML = options.join("");
                     menu.onchange = function () {
-                        textArea.value = menu.options[menu.selectedIndex].value;
                         that.reset();
+                        $('seed_text').value = menu.options[menu.selectedIndex].value;
                         that.insert_seed($('seed_text').value);
                     };
 
@@ -235,7 +238,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
         renderPageLinks: function () {
             //add controls
             var controlsHTML = "";
-            var c, cmds = ["start", "stop", "step", "reset", "randomize"];
+            var c, cmds = ["start", "stop", "step", "reset", "edit"];
             for (c = 0; c < cmds.length; c++) {
                 controlsHTML += mkBtn(cmds[c]);
             }
@@ -390,7 +393,21 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
         },
         setAutoPlay: function (ap) {
             AUTO_PLAY = ap;
+        },
+        edit: function () {
+            editor.style.display = "block";
+            editor.style.left = 600 + "px";
+            editor.style.top = 20 + "px";
+        },
+        addEditedForm: function () {
+            this.insert_seed(seed_textarea.value);
+        },
+        cancelEdit: function () {
+            editor.style.display = "none";
+            seed_textarea.value = patterns_menu.value;
         }
+
+
 
     };
 
