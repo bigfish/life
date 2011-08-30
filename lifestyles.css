@@ -1,0 +1,54 @@
+      body {
+        color:#CCC;
+        background-color: black;
+        font-family:Verdana,Arial,Helvetica,sans-serif;
+        font-size: 0.8em;
+        margin:0;
+      }
+      h1 {
+        position:absolute;
+        font-weight:normal;
+        margin:0;
+        padding:0 0 0 5px;
+      }
+      h3 {
+        text-align:center;
+      }
+      #controls {
+        margin-bottom: 5px;
+      }
+      a, a:visited {
+        text-decoration:none;
+        color: yellow;
+      }
+      a:active {
+        color: red;
+      }
+      a.active {
+        color: red;
+      }
+      #seed_text {
+        display:none;
+        background-color: black;
+        color: white;
+        font-family: Courier, monospace;
+      }
+      #thumbnails_controls {
+        margin-bottom: 5px;
+      }
+      #thumbnails_holder {
+        height: 100%;
+        overflow: auto;
+      }
+      .tooltip {
+        position:absolute;
+        background: #000;
+        border: 1px solid yellow;
+        color: yellow;
+        padding: 5px;
+        z-index: 100;
+      }
+
+      #player, #forms {
+        display:table-cell;
+      }
