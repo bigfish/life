@@ -2,7 +2,7 @@
         color:#CCC;
         background-color: black;
         font-family:Verdana,Arial,Helvetica,sans-serif;
-        font-size: 0.8em;
+        font-size: 0.85em;
         margin:0;
       }
       a, a:visited {
@@ -28,4 +28,9 @@
         background-color: black;
         color: white;
         font-family: Courier, monospace;
-    }
+	}
+	#info {
+			width: 600px;
+			font-size: 0.9em;
+			color: #00FF00;
+		}
