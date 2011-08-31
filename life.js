@@ -304,38 +304,35 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
             var that = this;
 
             function getRelPos(event) {
-                var mouseX, mouseY;
                 if (event.offsetX) {
-                    mouseX = event.offsetX;
-                    mouseY = event.offsetY;
+                    return [event.offsetX, event.offsetY];
                 } else {
-                    mouseX = event.pageX - event.target.offsetLeft;
-                    mouseY = event.pageY - event.target.offsetTop;
+                    return [event.pageX - event.target.offsetLeft, event.target.offsetTop];
                 }
-                return [mouseX, mouseY];
             }
 
-            function processClick(event) {
+            t_canvas.onclick = function (event) {
                 var col, row, idx, node = event.target,
                     x = event.clientX,
-                    y = event.clientY;
+                    y = event.clientY,
+                    parentNode = event.target.parentNode;
                 while (node) {
                     x -= node.offsetLeft - node.scrollLeft;
                     y -= node.offsetTop - node.scrollTop;
                     node = node.offsetParent;
                 }
-                col = Math.floor((event.target.parentNode.scrollLeft + x) / (t_width + space));
-                row = Math.floor((event.target.parentNode.scrollTop + y) / (t_height + space));
+                col = Math.floor((parentNode.scrollLeft + x) / (t_width + space));
+                row = Math.floor((parentNode.scrollTop + y) / (t_height + space));
                 idx = (curPage * t_rows * t_cols) + col * t_rows + row;
                 if (idx < patterns.length) {
                     that.insert_seed(patterns[idx].data);
                     patterns_menu.selectedIndex = idx;
                 }
-            }
+            };
 
-            t_canvas.onmouseover = t_canvas.onmousemove = function onThumbnailsHover(event) {
+            t_canvas.onmouseover = t_canvas.onmousemove = function (event) {
 
-                var pos = getRelPos(event),
+                var ts, pos = getRelPos(event),
                     x = pos[0],
                     y = pos[1],
                     col = Math.floor(x / (t_width + space)),
@@ -351,15 +348,16 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                             tooltip.style.display = "none";
                         };
                     }
-                    tooltip.style.display = "block";
-                    tooltip.style.left = event.target.offsetLeft + 8 + x + "px";
-                    tooltip.style.top = event.target.offsetTop + 15 + y + "px";
+                    ts = tooltip.style;
+                    ts.display = "block";
+                    ts.left = event.target.offsetLeft + 8 + x + "px";
+                    ts.top = event.target.offsetTop + 15 + y + "px";
                     tooltip.innerHTML = patterns[idx].name;
                 }
 
             };
 
-            t_canvas.addEventListener('click', processClick, false);
+
             document.onkeypress = function (e) {
                 console.log(e.keyCode);
                 if (e.keyCode === 13) { //return => clear

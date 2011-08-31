@@ -4,7 +4,7 @@ PNGS := data.png metadata.png life_png
 OPTIMIZED_PNGS := data_o.png metadata_o.png life_o.png
 INCLUDE_STATIC_LIFEFORMS := false
 MIN_LIFESPAN := 100
-MAX_NUM_FORMS := 200
+MAX_NUM_FORMS := 100
 
 all: loader_ugly.js life_o.png patterns.js data.png data_o.png results verify
 .PHONY: all
