@@ -4,6 +4,7 @@ PNGS := data.png metadata.png life_png
 OPTIMIZED_PNGS := data_o.png metadata_o.png life_o.png
 INCLUDE_STATIC_LIFEFORMS := false
 MIN_LIFESPAN := 100
+MAX_NUM_FORMS := 200
 
 all: loader_ugly.js life_o.png patterns.js data.png data_o.png results verify
 .PHONY: all
@@ -24,7 +25,7 @@ patterns.js:	$(LEXICON) parse.js
 #filter out the lifeforms which do not move
 patterns_filtered.js:	patterns.js filter.js
 	@echo "filtering patterns (this may take a few minutes)"
-	@node filter.js $(INCLUDE_STATIC_LIFEFORMS) $(MIN_LIFESPAN)
+	@node filter.js $(INCLUDE_STATIC_LIFEFORMS) $(MIN_LIFESPAN) $(MAX_NUM_FORMS)
 
 #generate metadata.png and data.png (image-encoded pattern data)
 data.png:	patterns_filtered.js generate.js txt2png.js
