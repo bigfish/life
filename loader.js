@@ -28,7 +28,3 @@ window.LOAD_JS_FROM_PNG = function (png, onLoad) {
 };
 //dev
 //production
-/*LOAD_JS_FROM_PNG("build/life_o.png", function () {
-    LIFE.init("canvas", 600, 600, "#000000", "#00FF00", 4);
-    LIFE.loadPatterns(document.getElementById("patterns"), document.getElementById("seed_text"));
-});*/

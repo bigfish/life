@@ -12,6 +12,9 @@
       a:active, a.active {
         color: red;
       }
+      #patterns {
+          width: 150px;
+        }
       #editor {
         position:absolute;
         z-index: 200;
@@ -26,18 +29,3 @@
         color: white;
         font-family: Courier, monospace;
     }
-      #thumbnails_controls {
-        /*margin-bottom: 5px;*/
-      }
-      .tooltip {
-        position:absolute;
-        background: #000;
-        border: 1px solid yellow;
-        color: yellow;
-        padding: 5px;
-        z-index: 100;
-      }
-
-      #canvas {
-          float: left
-        }

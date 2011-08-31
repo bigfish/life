@@ -3,29 +3,25 @@
   <head>
     <meta charset="utf-8">
     <title>LIFE::Forms</title>
-    <link rel="stylesheet" href="lifestyles-min.css">
+    <link rel="stylesheet" href="lifestyles.css">
   </head>
-  <body >
+  <body>
+    <div>
+      <select id="patterns"></select>
+      <span id="controls" ></span>
+    </div>
     <canvas id="canvas"></canvas>
-    <select id="patterns"></select>
-    <span id="controls" ></span>
-    <canvas id="thumbnails"></canvas>
-    <div id="thumbnails_controls"></div>
     <div id="editor">
       <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
       <input type="button" value="add" onclick="life.addEditedForm()" />
       <input type="button" value="close" onclick="life.cancelEdit()" />
     </div>
-    <input type="checkbox" id="wrap" onchange="life.setWrap(this.checked)" checked> <label>wrap</label>
-    <input type="checkbox" id="autoclear" onchange="life.setAutoClear(this.checked)" checked> <label>clear on add</label>
-    <input type="checkbox" id="autoplay" onchange="life.setAutoPlay(this.checked)" checked> <label>play on add</label>
     <script src="loader.js" ></script>
     <script src="life.js" ></script>
     <script>
     $ = function (id) { return document.getElementById(id); };
     var life = LIFE($("canvas"), 600, 600, "#000000", "#00FF00", 4);
     life.loadPatterns($("patterns"), $("seed_text"), $("editor"));
-    //life.start();
     </script>
     <!--<script src="./build/loader_ugly.js" ></script>-->
   </body>

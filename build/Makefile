@@ -6,7 +6,7 @@ INCLUDE_STATIC_LIFEFORMS := false
 MIN_LIFESPAN := 100
 MAX_NUM_FORMS := 100
 
-all: loader_ugly.js life_o.png patterns.js data.png data_o.png results verify
+all: loader_ugly.js lifestyles-min.css life_o.png patterns.js data.png data_o.png results verify
 .PHONY: all
 
 loader_ugly.js:	../loader.js
@@ -18,6 +18,9 @@ life_o.png:	../life.js txt2png.js
 	@uglifyjs -o life_ugly.js ../life.js
 	@node txt2png.js life_ugly.js life.png
 
+lifestyles-min.css: ../lifestyles.css
+	java -jar ${YUICOMPRESSOR} --type css -o lifestyles-min.css ../lifestyles.css  
+	
 patterns.js:	$(LEXICON) parse.js
 	@echo "parsing lexicon"
 	@node parse.js $(LEXICON)
