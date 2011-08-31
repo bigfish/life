@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>LIFE::Forms</title>
+    <link rel="stylesheet" href="build/lifestyles-min.css">
+  </head>
+  <body>
+    <div>
+      <select id="patterns"></select>
+      <span id="controls" ></span>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div id="editor">
+      <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
+      <input type="button" value="add" onclick="life.addEditedForm()" />
+      <input type="button" value="close" onclick="life.cancelEdit()" />
+    </div>
+    <script src="./build/loader_ugly.js" ></script>
+    <script>
+    var life, $ = function (id) { return document.getElementById(id); };
+    LOAD_JS_FROM_PNG("build/life_o.png", function (result) {
+        eval(result);
+        life = LIFE($("canvas"), 600, 600, "#000000", "#00FF00", 4);
+        life.loadPatterns($("patterns"), $("seed_text"), $("editor"));
+    });
+    </script>
+  </body>
+</html>
