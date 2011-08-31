@@ -1,6 +1,7 @@
 /*jslint node:true evil:true */
 /**
- * run all the life forms and return some stats about them:
+ * run all the life forms and filter out ones with lifespan of 0 (static) 
+ * or less than some threshold
  * lifespan: # of iterations before the pattern becomes static
  * repeats: (boolean) whether the pattern repeats
  * phase: # of iterations before repeat occurs
@@ -15,9 +16,14 @@ var patterns_js = fs.readFileSync("patterns.js", 'UTF-8');
 var patterns_json = patterns_js.substring("PATTERNS=".length, patterns_js.length - 1);
 var PATTERNS = JSON.parse(patterns_json);
 var INCLUDE_STATIC = true;
+var MIN_LIFESPAN = 0;
 
 if (process.argv.length === 3) {
     INCLUDE_STATIC = process.argv[2] === "true" ? true : false;
+}
+if (process.argv.length === 4) {
+    INCLUDE_STATIC = process.argv[2] === "true" ? true : false;
+    MIN_LIFESPAN = parseInt(process.argv[3], 10);
 }
 
 //var total_patterns = PATTERNS.length;
@@ -200,8 +206,9 @@ for (p = 0; p < PATTERNS.length; p++) {
     //PATTERNS[p].lifespan = 100;
     //}
     //apply filter
-    if (INCLUDE_STATIC || years > 0) {
+    if (INCLUDE_STATIC || years >= MIN_LIFESPAN) {
         filtered_patterns.push(PATTERNS[p]);
     }
 }
+console.log("filtered " + PATTERNS.length + "patterns to " + filtered_patterns.length + ".");
 fs.writeFileSync("patterns_filtered.js", "PATTERNS=" + JSON.stringify(filtered_patterns) + ";");

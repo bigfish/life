@@ -21,7 +21,7 @@
         font-family: Courier, monospace;
       }
       #editor #seed_text {
-          display: block;
+        display: block;
         background-color: black;
         color: white;
         font-family: Courier, monospace;

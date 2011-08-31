@@ -372,6 +372,10 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                 if (e.keyCode === 32) { //space => pause / play 
                     that.reset();
                 }
+                if (e.keyCode === 110) { //n => next form
+                    patterns_menu.selectedIndex += 1;
+                    that.insert_seed(patterns[patterns_menu.selectedIndex].data);
+                }
             };
 
         },
