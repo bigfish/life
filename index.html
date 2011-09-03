@@ -12,18 +12,18 @@
         <div id="controls" ></div>
         <div id="forms-title">FORMS</div>
       </div>
-      <div id="player"><canvas id="canvas"></canvas></div>
+      <canvas id="canvas"></canvas>
       <div id="forms"><div id="seeds" ></div> </div>
     </div>
     <div id="editor">
-      <p class="title">Seed Editor<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a></p>
+      <p class="title">Seed Editor<span id="edCloseBtn" /></p>
       <p>'O' (capital 'o') = ON cell</p>
       <p>'.' = OFF cell</p>
       <textarea id="seed_text" spellcheck="false" wrap="off"></textarea><br>
-      <a href="#" onclick="life.addEditedForm()">Add</a>
+      <span id="addBtn" />
     </div>
     <div id="info">
-      <p class="title">The Game of Life <a class="closeBtn" href="#" onclick="$('info').style.display='none';return false">X</a></p>
+      <p class="title">The Game of Life <span id="infoCloseBtn" /></p>
       <p ><a href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life" >Wikipedia Page</a></p>
       <p>Seed patterns obtained from <a href="http://www.argentum.freeserve.co.uk/lex.htm">The&nbsp;Life&nbsp;Lexicon</a>.</p>
       <p>You can copy and paste seeds from the lexicon into the editor.</p>

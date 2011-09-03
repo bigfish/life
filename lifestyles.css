@@ -24,7 +24,7 @@ a:active, a.active, #seeds a:visited {
 #top {
 	display: table-row;
 }
-#controls,  #player, #forms, #forms-title {
+#controls, #forms, #forms-title {
 	display:table-cell;
 	vertical-align: top;
 	text-align: left;
@@ -61,7 +61,7 @@ a:active, a.active, #seeds a:visited {
 	padding: 2px;
 }
 #seeds {
-	overflow:auto;
+	overflow-y:scroll;
 }
 #seeds a {
 	display:block;

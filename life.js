@@ -252,9 +252,13 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                         controlsHTML += mkBtn(cmds[c]);
                     }
                     $("controls").innerHTML = "LIFE " + controlsHTML;
+                    $("forms-title").innerHTML = mkBtn("prev", "&lt;&lt;") + " FORMS " + mkBtn("next", "&gt;&gt;");
+                    $("edCloseBtn").innerHTML = '<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a>';
+                    $("addBtn").innerHTML = '<a href="#" onclick="life.addEditedForm()">Add</a>';
+                    $("infoCloseBtn").innerHTML = '<a class="closeBtn" href="#" onclick="$(\'info\').style.display=\'none\';return false">X</a>';
                 });
             });
-            window.onresize = function () {
+            window.onresize = window.onorientationchange = function () {
                 resize();
                 render();
             };
@@ -275,6 +279,15 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             editor.style.display = "none";
             //seed_textarea.value = patterns_menu.value;
             return false;
+        },
+        shift: function (dir) {
+            $("seeds").scrollTop += dir *  100;
+        },
+        next: function () {
+            this.shift(1);
+        },
+        prev: function () {
+            this.shift(-1);
         }
     };
 };
