@@ -7,15 +7,22 @@
     <link rel="stylesheet" href="lifestyles.css">
   </head>
   <body>
-    LIFE Forms <select id="patterns"></select>
-    <canvas id="canvas"></canvas>
-    <div id="seeds" ></div>
+    <table id="main" width="100%" height="100%">
+      <tr>
+        <td id="controls" ></td>
+        <td>FORMS</td>
+      </tr>
+      <tr>
+        <td><canvas id="canvas"></canvas></td>
+        <td><div id="seeds" ></div> </td>
+      </tr>
+    </table>
+
     <div id="editor">
       <p class="title">Seed Editor<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a></p>
       <p>'O' (capital 'o') = ON cell</p>
       <p>'.' = OFF cell</p>
-      <textarea id="seed_text" spellcheck="false" wrap="off"></textarea>
-      <br>
+      <textarea id="seed_text" spellcheck="false" wrap="off"></textarea><br>
       <a href="#" onclick="life.addEditedForm()">Add</a>
     </div>
     <div id="info">
@@ -25,12 +32,11 @@
       <p>You can copy and paste seeds from the lexicon into the editor.</p>
       <p><a href="https://github.com/bigfish/life/tree/js10k">Source Code</a>.</p>
     </div>
-    <div id="controls" />
     <script src="loader.js" ></script>
     <script src="life.js" ></script>
     <script>
     life = LIFE($("canvas"), "#000000", "#00FF00", 4);
-    life.init($("patterns"), $("seed_text"), $("editor"));
+    life.init($("seed_text"), $("editor"));
     </script>
   </body>
 </html>

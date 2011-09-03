@@ -5,6 +5,10 @@
         font-size: 0.85em;
         margin:0;
       }
+	  h1 {
+		font-size: 1em;
+		margin: 0;
+		}
       a, a:visited {
         text-decoration:none;
         color: yellow;
@@ -12,14 +16,16 @@
       a:active, a.active {
         color: red;
       }
-      #patterns {
-          width: 150px;
-        }
+	 #main {
+			 display:table-cell;
+		}
      #editor #seed_text {
         display: inline-block;
 		color:white;
 		background: black;
         font-family: Courier, monospace;
+	}
+	#canvas {
 	}
 	.closeBtn {
 		width:10px;
@@ -43,12 +49,16 @@
 		z-index: 300;
 		border: 1px solid yellow;
 	}
+	#controls {
+			text-align:center;
+			display:inline-block;
+		}
 	#info p, #editor p{
 		padding: 2px;
 	}
 	#seeds {
-			overflow:auto;
-		}
+		overflow:auto;
+	}
 	#seeds a {
 		display:block;
-		}
+	}

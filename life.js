@@ -46,10 +46,8 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
 
     function resize() {
         var row, col, tmpCells;
-        //this should really not include the calculations of width and height
-        //but putting that in here to take advantage of compression of sinle file
         var dh = window.innerHeight - 50;
-        var dw = window.innerWidth;
+        var dw = window.innerWidth - 200;
         width = height = dw < dh ? dw : dh;
         //set size
         canvas.setAttribute("width", width);
@@ -65,16 +63,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             }
         }
         cells = tmpCells;
-        if (dw - dh > 200) {
-            display("seeds", "block");
-            $("canvas").style.float = "left";
-            $("seeds").style.height = height + "px";
-            display("patterns", "none");
-        } else {
-            $("canvas").style.float = "none";
-            display("seeds", "none");
-            display("patterns", "inline");
-        }
+        $("seeds").style.height = height + "px";
     }
 
 
@@ -219,7 +208,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             render();
         },
 
-        init: function (menu, textArea, ed) {
+        init: function (textArea, ed) {
             reset();
             resize();
             var patterns_data = [],
@@ -227,12 +216,10 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                 pattern_str = "";
             editor = ed;
             patterns = [];
-            patterns_menu = menu;
             seed_textarea = textArea;
             var that = this;
             LOAD_JS_FROM_PNG("build/data_o.png", function (text, imagedata) {
-                var i, o, rows, cols, r, c, offset, options = [],
-                    links = [];
+                var i, o, rows, cols, r, c, offset, links = [];
                 //normalize the binary format used for compression to usable characters '.' or 'O'
                 for (i = 0; i < imagedata.length; i += 4) {
                     patterns_data.push(imagedata[i] ? '.' : 'O');
@@ -254,8 +241,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                                 pattern_str += "\n";
                             }
                         }
-                        links.push("<a href='#' onclick='life.insertSeed(\"" + pattern_str.replace(/\n/gm, "\\n") + "\");return false' >" + METADATA[o] + "</a>");
-                        options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
+                        links.push("<a href='#' onclick='life.insertSeed(\"" + pattern_str.replace(/\n/gm, '\\n') + "\");return false' >" + METADATA[o] + "</a>");
                         //add to patterns collection
                         patterns.push({
                             name: METADATA[o],
@@ -264,14 +250,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                             data: pattern_str
                         });
                     }
-                    menu.innerHTML = options.join("");
                     $("seeds").innerHTML = links.join("");
-                    menu.onchange = function () {
-                        that.reset();
-                        $('seed_text').value = menu.options[menu.selectedIndex].value;
-                        that.insertSeed($('seed_text').value);
-                    };
-
                     that.insertSeed(patterns[0].data);
                     //add controls
                     var controlsHTML = "";
@@ -279,7 +258,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                     for (c = 0; c < cmds.length; c++) {
                         controlsHTML += mkBtn(cmds[c]);
                     }
-                    $("controls").innerHTML = controlsHTML;
+                    $("controls").innerHTML = "LIFE " + controlsHTML;
                 });
             });
             window.onresize = function () {
@@ -301,7 +280,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
         },
         cancelEdit: function () {
             editor.style.display = "none";
-            seed_textarea.value = patterns_menu.value;
+            //seed_textarea.value = patterns_menu.value;
             return false;
         }
     };
