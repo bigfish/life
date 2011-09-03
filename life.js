@@ -63,7 +63,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             }
         }
         cells = tmpCells;
-        $("seeds").style.height = height + "px";
+        $("seeds").style.height = dh  + "px";
     }
 
 

@@ -1,64 +1,68 @@
-      body {
-		color: #00FF00;
-        background-color: black;
-        font-family:Verdana,Arial,Helvetica,sans-serif;
-        font-size: 0.85em;
-        margin:0;
-      }
-	  h1 {
-		font-size: 1em;
-		margin: 0;
-		}
-      a, a:visited {
-        text-decoration:none;
-        color: yellow;
-      }
-      a:active, a.active {
-        color: red;
-      }
-	 #main {
-			 display:table-cell;
-		}
-     #editor #seed_text {
-        display: inline-block;
-		color:white;
-		background: black;
-        font-family: Courier, monospace;
-	}
-	#canvas {
-	}
-	.closeBtn {
-		width:10px;
-		float:right;
-	}
-	.title {
-		margin: 0;
-		color: yellow;
-		border-bottom: 1px solid yellow;
-	}
-	#info, #editor {
-		position:absolute;
-		display:none;
-		margin: 0;
-		padding: 0;
-		background: black;
-		text-align:center;
-		width: 50%;
-		left: 25%;
-		top: 10%;
-		z-index: 300;
-		border: 1px solid yellow;
-	}
-	#controls {
-			text-align:center;
-			display:inline-block;
-		}
-	#info p, #editor p{
-		padding: 2px;
-	}
-	#seeds {
-		overflow:auto;
-	}
-	#seeds a {
-		display:block;
-	}
+body {
+	color: #00FF00;
+    background-color: black;
+    font-family:Verdana,Arial,Helvetica,sans-serif;
+    font-size: 0.85em;
+    margin:0;
+}
+h1 {
+	font-size: 1em;
+	margin: 0;
+}
+a, a:visited {
+    text-decoration:none;
+    color: yellow;
+}
+a:active, a.active {
+    color: red;
+}
+#container {
+	display:table;
+	width:100%;
+	height:100%
+}
+#top, #main {
+	display: table-row;
+}
+#controls, #player, #forms, #forms-title {
+	display:table-cell;
+	vertical-align: top;
+	text-align: left;
+}
+#editor #seed_text {
+    display: inline-block;
+	color:white;
+	background: black;
+    font-family: Courier, monospace;
+}
+.closeBtn {
+	width:10px;
+	float:right;
+}
+.title {
+	margin: 0;
+	color: yellow;
+	border-bottom: 1px solid yellow;
+}
+#info, #editor {
+	position:absolute;
+	display:none;
+	margin: 0;
+	padding: 0;
+	background: black;
+	text-align:center;
+	width: 50%;
+	left: 25%;
+	top: 10%;
+	z-index: 300;
+	border: 1px solid yellow;
+}
+#info p, #editor p{
+	padding: 2px;
+}
+#seeds {
+	overflow:auto;
+}
+#seeds a {
+	display:block;
+}

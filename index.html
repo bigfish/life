@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="lifestyles.css">
   </head>
   <body>
-    <table id="main" width="100%" height="100%">
-      <tr>
-        <td id="controls" ></td>
-        <td>FORMS</td>
-      </tr>
-      <tr>
-        <td><canvas id="canvas"></canvas></td>
-        <td><div id="seeds" ></div> </td>
-      </tr>
-    </table>
+    <div id="container" >
+      <div id="top">
+        <div id="controls" ></div>
+        <div id="forms-title">FORMS</div>
+      </div>
+      <div id="main">
+        <div id="player"><canvas id="canvas"></canvas></div>
+        <div id="forms"><div id="seeds" ></div> </div>
+      </div>
+    </div>
 
     <div id="editor">
       <p class="title">Seed Editor<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a></p>
