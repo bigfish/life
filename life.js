@@ -40,6 +40,10 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
         }
     }
 
+    function display(id, val) {
+        $(id).style.display = val;
+    }
+
     function resize() {
         var row, col, tmpCells;
         //this should really not include the calculations of width and height
@@ -61,7 +65,18 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             }
         }
         cells = tmpCells;
+        if (dw - dh > 200) {
+            display("seeds", "block");
+            $("canvas").style.float = "left";
+            $("seeds").style.height = height + "px";
+            display("patterns", "none");
+        } else {
+            $("canvas").style.float = "none";
+            display("seeds", "none");
+            display("patterns", "inline");
+        }
     }
+
 
     function applyRule(cell, neighbours) {
 
@@ -168,7 +183,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
 
         restart: function () {
             reset();
-            this.insert_seed(patterns_menu.options[patterns_menu.selectedIndex].value);
+            this.insertSeed(patterns_menu.options[patterns_menu.selectedIndex].value);
         },
 
         goTo: function (incr) {
@@ -176,7 +191,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             next_idx = next_idx < patterns_menu.options.length ? next_idx : 0;
             next_idx = next_idx >= 0 ? next_idx : patterns_menu.options.length - 1;
             patterns_menu.selectedIndex = next_idx;
-            this.insert_seed(patterns_menu.options[next_idx].value);
+            this.insertSeed(patterns_menu.options[next_idx].value);
         },
         next: function () {
             this.goTo(1);
@@ -186,7 +201,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             this.goTo(-1);
         },
 
-        insert_seed: function (seedText) {
+        insertSeed: function (seedText) {
             var line, r, c, lines = seedText.split('\n'),
                 row_offset = Math.floor(rows / 2) - Math.floor(lines.length / 2),
                 col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
@@ -216,7 +231,8 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             seed_textarea = textArea;
             var that = this;
             LOAD_JS_FROM_PNG("build/data_o.png", function (text, imagedata) {
-                var i, o, rows, cols, r, c, offset, options = [];
+                var i, o, rows, cols, r, c, offset, options = [],
+                    links = [];
                 //normalize the binary format used for compression to usable characters '.' or 'O'
                 for (i = 0; i < imagedata.length; i += 4) {
                     patterns_data.push(imagedata[i] ? '.' : 'O');
@@ -225,7 +241,8 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                 //load metadata
                 LOAD_JS_FROM_PNG("build/metadata_o.png", function (js_str) {
                     eval(js_str);
-                    //construct options for menu
+                    //construct options for menu -- select menu or list of links
+                    //depending on available space
                     for (o = 0; o < METADATA.length; o += 4) {
                         pattern_str = "";
                         offset = METADATA[o + 1];
@@ -237,6 +254,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                                 pattern_str += "\n";
                             }
                         }
+                        links.push("<a href='#' onclick='life.insertSeed(\"" + pattern_str.replace(/\n/gm, "\\n") + "\");return false' >" + METADATA[o] + "</a>");
                         options.push("<option value='" + pattern_str + "' >" + METADATA[o] + "</option>");
                         //add to patterns collection
                         patterns.push({
@@ -247,13 +265,14 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                         });
                     }
                     menu.innerHTML = options.join("");
+                    $("seeds").innerHTML = links.join("");
                     menu.onchange = function () {
                         that.reset();
                         $('seed_text').value = menu.options[menu.selectedIndex].value;
-                        that.insert_seed($('seed_text').value);
+                        that.insertSeed($('seed_text').value);
                     };
 
-                    that.insert_seed(patterns[0].data);
+                    that.insertSeed(patterns[0].data);
                     //add controls
                     var controlsHTML = "";
                     var c, cmds = ["Play", "Stop", "Step", "Restart", "Next", "Prev", "Edit", "Info"];
@@ -277,7 +296,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
         },
         addEditedForm: function () {
             editor.style.display = "none";
-            this.insert_seed(seed_textarea.value);
+            this.insertSeed(seed_textarea.value);
             return false;
         },
         cancelEdit: function () {

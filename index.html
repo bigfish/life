@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="lifestyles.css">
   </head>
   <body>
-    <div>LIFE Forms
-      <select id="patterns"></select>
-    </div>
+    LIFE Forms <select id="patterns"></select>
     <canvas id="canvas"></canvas>
+    <div id="seeds" ></div>
     <div id="editor">
       <p class="title">Seed Editor<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a></p>
       <p>'O' (capital 'o') = ON cell</p>
@@ -26,7 +25,7 @@
       <p>You can copy and paste seeds from the lexicon into the editor.</p>
       <p><a href="https://github.com/bigfish/life/tree/js10k">Source Code</a>.</p>
     </div>
-    <div id="controls" ></div>
+    <div id="controls" />
     <script src="loader.js" ></script>
     <script src="life.js" ></script>
     <script>

@@ -46,3 +46,9 @@
 	#info p, #editor p{
 		padding: 2px;
 	}
+	#seeds {
+			overflow:auto;
+		}
+	#seeds a {
+		display:block;
+		}
