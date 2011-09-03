@@ -63,7 +63,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             }
         }
         cells = tmpCells;
-        $("seeds").style.height = dh  + "px";
+        $("seeds").style.height = dh + "px";
     }
 
 
@@ -170,34 +170,14 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
 
         reset: reset,
 
-        restart: function () {
-            reset();
-            this.insertSeed(patterns_menu.options[patterns_menu.selectedIndex].value);
-        },
-
-        goTo: function (incr) {
-            var next_idx = patterns_menu.selectedIndex + incr;
-            next_idx = next_idx < patterns_menu.options.length ? next_idx : 0;
-            next_idx = next_idx >= 0 ? next_idx : patterns_menu.options.length - 1;
-            patterns_menu.selectedIndex = next_idx;
-            this.insertSeed(patterns_menu.options[next_idx].value);
-        },
-        next: function () {
-            this.goTo(1);
-        },
-
-        prev: function () {
-            this.goTo(-1);
-        },
-
         insertSeed: function (seedText) {
             var line, r, c, lines = seedText.split('\n'),
                 row_offset = Math.floor(rows / 2) - Math.floor(lines.length / 2),
                 col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
             reset();
             seed_textarea.value = seedText;
-            seed_textarea.setAttribute("rows", lines.length + 5);
-            seed_textarea.setAttribute("cols", lines[0].length + 5);
+            seed_textarea.setAttribute("rows", lines.length + 2);
+            seed_textarea.setAttribute("cols", lines[0].length + 2);
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
@@ -206,6 +186,15 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                 }
             }
             render();
+        },
+
+        insertSeedNamed: function (name) {
+            var i;
+            for (i = 0; i < patterns.length; i++) {
+                if (patterns[i].name === name) {
+                    this.insertSeed(patterns[i].data);
+                }
+            }
         },
 
         init: function (textArea, ed) {
@@ -241,7 +230,7 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                                 pattern_str += "\n";
                             }
                         }
-                        links.push("<a href='#' onclick='life.insertSeed(\"" + pattern_str.replace(/\n/gm, '\\n') + "\");return false' >" + METADATA[o] + "</a>");
+                        links.push("<a href='#" + METADATA[o] + "' onclick='life.insertSeed(\"" + pattern_str.replace(/\n/gm, '\\n') + "\");' >" + METADATA[o] + "</a>");
                         //add to patterns collection
                         patterns.push({
                             name: METADATA[o],
@@ -251,10 +240,14 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                         });
                     }
                     $("seeds").innerHTML = links.join("");
-                    that.insertSeed(patterns[0].data);
+                    if (location.hash) {
+                        that.insertSeedNamed(location.hash.substr(1));
+                    } else {
+                        that.insertSeed(patterns[0].data);
+                    }
                     //add controls
                     var controlsHTML = "";
-                    var c, cmds = ["Play", "Stop", "Step", "Restart", "Next", "Prev", "Edit", "Info"];
+                    var c, cmds = ["Play", "Stop", "Step", "Edit", "Info"];
                     for (c = 0; c < cmds.length; c++) {
                         controlsHTML += mkBtn(cmds[c]);
                     }
