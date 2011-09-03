@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0;" /> 
     <meta charset="utf-8">
     <title>LIFE Forms</title>
     <link rel="stylesheet" href="lifestyles.css">
@@ -8,24 +9,29 @@
   <body>
     <div>LIFE Forms
       <select id="patterns"></select>
-      <span id="controls" ></span>
     </div>
     <canvas id="canvas"></canvas>
     <div id="editor">
-      <textarea id="seed_text" rows="40" cols="58" spellcheck="false" wrap="off"></textarea>
-      <input type="button" value="add" onclick="life.addEditedForm()" />
-      <input type="button" value="close" onclick="life.cancelEdit()" />
+      <p class="title">Seed Editor<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a></p>
+      <p>'O' (capital 'o') = ON cell</p>
+      <p>'.' = OFF cell</p>
+      <textarea id="seed_text" spellcheck="false" wrap="off"></textarea>
+      <br>
+      <a href="#" onclick="life.addEditedForm()">Add</a>
     </div>
+    <div id="info">
+      <p class="title">The Game of Life <a class="closeBtn" href="#" onclick="$('info').style.display='none';return false">X</a></p>
+      <p ><a href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life" >Wikipedia Page</a></p>
+      <p>Seed patterns obtained from <a href="http://www.argentum.freeserve.co.uk/lex.htm">The&nbsp;Life&nbsp;Lexicon</a>.</p>
+      <p>You can copy and paste seeds from the lexicon into the editor.</p>
+      <p><a href="https://github.com/bigfish/life/tree/js10k">Source Code</a>.</p>
+    </div>
+    <div id="controls" ></div>
     <script src="loader.js" ></script>
     <script src="life.js" ></script>
     <script>
-    $ = function (id) { return document.getElementById(id); };
-    var life = LIFE($("canvas"), 600, 600, "#000000", "#00FF00", 4);
-    life.loadPatterns($("patterns"), $("seed_text"), $("editor"));
+    life = LIFE($("canvas"), "#000000", "#00FF00", 4);
+    life.init($("patterns"), $("seed_text"), $("editor"));
     </script>
-    <footer id="info">
-      <span>Seed patterns obtained from: <a href="http://www.argentum.freeserve.co.uk/lex.htm">the Life Lexicon</a>.</span>
-      <span style="float:right;"><a href="https://github.com/bigfish/life/tree/js10k">Source Code</a>.</span>
-    </footer>
   </body>
 </html>

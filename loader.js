@@ -26,5 +26,7 @@ window.LOAD_JS_FROM_PNG = function (png, onLoad) {
     };
     img.src = png;
 };
-//dev
-//production
+var $ = function (id) {
+        return document.getElementById(id);
+    };
+

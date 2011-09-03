@@ -16,14 +16,17 @@
       <input type="button" value="add" onclick="life.addEditedForm()" />
       <input type="button" value="close" onclick="life.cancelEdit()" />
     </div>
+    <footer id="info">
+      <span>Seed patterns obtained from: <a href="http://www.argentum.freeserve.co.uk/lex.htm">the Life Lexicon</a>.</span>
+      <span style="float:right;"><a href="https://github.com/bigfish/life/tree/js10k">Source Code</a>.</span>
+    </footer>
     <script src="./build/loader_ugly.js" ></script>
     <script>
-    var life, $ = function (id) { return document.getElementById(id); };
-    LOAD_JS_FROM_PNG("build/life_o.png", function (result) {
-        eval(result);
-        life = LIFE($("canvas"), 600, 600, "#000000", "#00FF00", 4);
-        life.loadPatterns($("patterns"), $("seed_text"), $("editor"));
-    });
+   LOAD_JS_FROM_PNG("build/life_o.png", function (result) {
+    eval(result);
+    life = LIFE($("canvas"), "#000000", "#00FF00", 4);
+    life.init($("patterns"), $("seed_text"), $("editor"));
+}); 
     </script>
   </body>
 </html>

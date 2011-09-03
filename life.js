@@ -1,18 +1,13 @@
 /*jslint evil:true */
-/*globals METADATA $ LOAD_JS_FROM_PNG*/
-window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
-    var editor, patterns_menu, seed_textarea, t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
+/*globals LIFE METADATA $ LOAD_JS_FROM_PNG*/
+window.LIFE = function (canvas, bg, fg, cellsize) {
+    var editor, width, height, patterns_menu, seed_textarea, t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
         THUMBNAIL_SIZE = 100,
         ctx = canvas.getContext("2d") || window.alert("unable to initialize canvas. Check browser support.");
+
     size = cellsize || 1;
     cells = [];
     oldCells = [];
-
-    //set size
-    canvas.setAttribute("width", width);
-    canvas.setAttribute("height", height);
-    cols = Math.floor(width / size);
-    rows = Math.floor(height / size);
 
     function clear() {
         ctx.fillStyle = bg;
@@ -33,7 +28,40 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
         clear();
     }
 
-    reset();
+    function render() {
+        var row, col;
+        clear();
+        for (row = 0; row < rows; row++) {
+            for (col = 0; col < cols; col++) {
+                if (cells[row][col]) {
+                    ctx.fillRect(col * size, row * size, size, size);
+                }
+            }
+        }
+    }
+
+    function resize() {
+        var row, col, tmpCells;
+        //this should really not include the calculations of width and height
+        //but putting that in here to take advantage of compression of sinle file
+        var dh = window.innerHeight - 50;
+        var dw = window.innerWidth;
+        width = height = dw < dh ? dw : dh;
+        //set size
+        canvas.setAttribute("width", width);
+        canvas.setAttribute("height", height);
+        cols = Math.floor(width / size);
+        rows = Math.floor(height / size);
+        //truncate or extend the cells array
+        tmpCells = [];
+        for (row = 0; row < rows; row++) {
+            tmpCells[row] = [];
+            for (col = 0; col < cols; col++) {
+                tmpCells[row][col] = cells[row] ? (cells[row][col] || 0) : 0;
+            }
+        }
+        cells = tmpCells;
+    }
 
     function applyRule(cell, neighbours) {
 
@@ -59,18 +87,6 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
         }
     }
 
-    function render() {
-        var row, col;
-        clear();
-        for (row = 0; row < rows; row++) {
-            for (col = 0; col < cols; col++) {
-                if (cells[row][col]) {
-                    ctx.fillRect(col * size, row * size, size, size);
-                }
-            }
-        }
-    }
-
     function random_seed() {
         var i, row, col;
         reset();
@@ -87,6 +103,10 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
         var row, col, rightcol, leftcol, top, toprow, botrow, topright, right, botright, bottom, botleft, left, topleft, topEdge, botEdge, leftEdge, rightEdge;
         var newCells = oldCells;
         for (row = 0; row < rows; row++) {
+            //in case the number of rows increased
+            if (!newCells[row]) {
+                newCells[row] = [];
+            }
             topEdge = (row === 0);
             botEdge = (row === rows - 1);
             for (col = 0; col < cols; col++) {
@@ -119,7 +139,7 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
     }
 
 
-    //export an object with useful methods
+    //export an object with public methods
     return {
 
         randomize: random_seed,
@@ -172,6 +192,8 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                 col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
             reset();
             seed_textarea.value = seedText;
+            seed_textarea.setAttribute("rows", lines.length + 5);
+            seed_textarea.setAttribute("cols", lines[0].length + 5);
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
@@ -182,7 +204,9 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
             render();
         },
 
-        loadPatterns: function (menu, textArea, ed) {
+        init: function (menu, textArea, ed) {
+            reset();
+            resize();
             var patterns_data = [],
                 patterns_data_text = "",
                 pattern_str = "";
@@ -232,28 +256,34 @@ window.LIFE = function (canvas, width, height, bg, fg, cellsize) {
                     that.insert_seed(patterns[0].data);
                     //add controls
                     var controlsHTML = "";
-                    var c, cmds = ["Play", "Stop", "Step", "Restart", "Next", "Prev", "Edit"];
+                    var c, cmds = ["Play", "Stop", "Step", "Restart", "Next", "Prev", "Edit", "Info"];
                     for (c = 0; c < cmds.length; c++) {
                         controlsHTML += mkBtn(cmds[c]);
                     }
                     $("controls").innerHTML = controlsHTML;
                 });
             });
+            window.onresize = function () {
+                resize();
+                render();
+            };
         },
-
+        info: function () {
+            $("info").style.display = "block";
+        },
         edit: function () {
             this.stop();
             editor.style.display = "block";
-            editor.style.left = "0px";
-            editor.style.top = "20px";
         },
         addEditedForm: function () {
             editor.style.display = "none";
             this.insert_seed(seed_textarea.value);
+            return false;
         },
         cancelEdit: function () {
             editor.style.display = "none";
             seed_textarea.value = patterns_menu.value;
+            return false;
         }
     };
 };
