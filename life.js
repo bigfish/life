@@ -3,7 +3,13 @@
 window.LIFE = function (canvas, bg, fg, cellsize) {
     var editor, width, height, patterns_menu, seed_textarea, t_canvas, size, timer, rows, cols, cells, oldCells, patterns, makeThumbnails, numPages, curPage, THUMBNAIL_WIDTH = 100,
         THUMBNAIL_SIZE = 100,
-        ctx = canvas.getContext("2d") || window.alert("unable to initialize canvas. Check browser support.");
+        H = function (e, h) {
+            $(e).innerHTML = h;
+        },
+        A = function (e, a, v) {
+            e.setAttribute(a, v);
+        },
+        ctx = canvas.getContext("2d");//stripping error handling to bum some bytes
 
     size = cellsize || 1;
     cells = [];
@@ -40,18 +46,18 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
         }
     }
 
-    function display(id, val) {
-        $(id).style.display = val;
+    function display(el, val) {
+        el.style.display = val;
     }
 
     function resize() {
-        var row, col, tmpCells;
-        var dh = window.innerHeight - 50;
-        var dw = window.innerWidth - 200;
+        var row, col, tmpCells,
+            dh = window.innerHeight - 30,
+            dw = window.innerWidth - 200;
         width = height = dw < dh ? dw : dh;
         //set size
-        canvas.setAttribute("width", width);
-        canvas.setAttribute("height", height);
+        A(canvas, "width", width);
+        A(canvas, "height", height);
         cols = Math.floor(width / size);
         rows = Math.floor(height / size);
         //truncate or extend the cells array
@@ -91,21 +97,9 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
         }
     }
 
-    function random_seed() {
-        var i, row, col;
-        reset();
-        //set some random pixels to be 'on' -- about a third of all pixels
-        for (i = 0; i < rows * cols * 0.1; i++) {
-            row = Math.floor(Math.random() * rows);
-            col = Math.floor(Math.random() * cols);
-            cells[row][col] = 1;
-        }
-        render();
-    }
-
     function iterate() {
-        var row, col, rightcol, leftcol, top, toprow, botrow, topright, right, botright, bottom, botleft, left, topleft, topEdge, botEdge, leftEdge, rightEdge;
-        var newCells = oldCells;
+        var row, col, rightcol, leftcol, top, toprow, botrow, topright, right, botright, bottom, botleft, left, topleft, topEdge, botEdge, leftEdge, rightEdge,
+            newCells = oldCells;
         for (row = 0; row < rows; row++) {
             //in case the number of rows increased
             if (!newCells[row]) {
@@ -139,14 +133,12 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
     }
 
     function mkBtn(cmd, label) {
-        return "<a href='#' onclick='life." + cmd.toLowerCase() + "();return false'>" + (label ? label : cmd) + "</a> ";
+        return "<a href='#' onclick='" + cmd + ";return false'>" + (label ? label : cmd) + "</a> ";
     }
 
 
     //export an object with public methods
     return {
-
-        randomize: random_seed,
 
         start: function () {
             if (timer) {
@@ -176,8 +168,8 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                 col_offset = Math.floor(cols / 2) - Math.floor(lines[0].length / 2);
             reset();
             seed_textarea.value = seedText;
-            seed_textarea.setAttribute("rows", lines.length + 2);
-            seed_textarea.setAttribute("cols", lines[0].length + 2);
+            A(seed_textarea, "rows", lines.length + 2);
+            A(seed_textarea, "cols", lines[0].length + 2);
             for (r = 0; r < lines.length; r++) {
                 line = lines[r];
                 line = line.trim();
@@ -202,13 +194,16 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             resize();
             var patterns_data = [],
                 patterns_data_text = "",
-                pattern_str = "";
+                pattern_str = "",
+                that = this;
             editor = ed;
             patterns = [];
             seed_textarea = textArea;
-            var that = this;
             LOAD_JS_FROM_PNG("build/data_o.png", function (text, imagedata) {
-                var i, o, rows, cols, r, c, offset, links = [];
+                var i, o, rows, cols, r, c, offset,
+                    links = [],
+                    controlsHTML = "",
+                    cmds = ["Play", "Stop", "Step", "Edit", "Info"];
                 //normalize the binary format used for compression to usable characters '.' or 'O'
                 for (i = 0; i < imagedata.length; i += 4) {
                     patterns_data.push(imagedata[i] ? '.' : 'O');
@@ -217,8 +212,6 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                 //load metadata
                 LOAD_JS_FROM_PNG("build/metadata_o.png", function (js_str) {
                     eval(js_str);
-                    //construct options for menu -- select menu or list of links
-                    //depending on available space
                     for (o = 0; o < METADATA.length; o += 4) {
                         pattern_str = "";
                         offset = METADATA[o + 1];
@@ -246,16 +239,14 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
                         that.insertSeed(patterns[0].data);
                     }
                     //add controls
-                    var controlsHTML = "";
-                    var c, cmds = ["Play", "Stop", "Step", "Edit", "Info"];
                     for (c = 0; c < cmds.length; c++) {
-                        controlsHTML += mkBtn(cmds[c]);
+                        controlsHTML += mkBtn('life.' + cmds[c].toLowerCase() + '()', cmds[c]);
                     }
-                    $("controls").innerHTML = "LIFE " + controlsHTML;
-                    $("forms-title").innerHTML = mkBtn("prev", "&lt;&lt;") + " FORMS " + mkBtn("next", "&gt;&gt;");
-                    $("edCloseBtn").innerHTML = '<a class="closeBtn" href="#" onclick="life.cancelEdit()">X</a>';
-                    $("addBtn").innerHTML = '<a href="#" onclick="life.addEditedForm()">Add</a>';
-                    $("infoCloseBtn").innerHTML = '<a class="closeBtn" href="#" onclick="$(\'info\').style.display=\'none\';return false">X</a>';
+                    H("controls", "LIFE " + controlsHTML);
+                    H("forms-title", mkBtn("life.prev()", "&lt;&lt;") + " FORMS " + mkBtn("life.next()", "&gt;&gt;"));
+                    H("edCloseBtn", mkBtn("life.cancelEdit()", 'X'));
+                    H("addBtn", mkBtn("life.addEditedForm()", "Add"));
+                    H("infoCloseBtn", mkBtn("life.cancelInfo()", "X"));
                 });
             });
             window.onresize = window.onorientationchange = function () {
@@ -264,21 +255,24 @@ window.LIFE = function (canvas, bg, fg, cellsize) {
             };
         },
         info: function () {
-            $("info").style.display = "block";
+            display($("info"), "block");
         },
         edit: function () {
             this.stop();
-            editor.style.display = "block";
+            display(editor, "block");
         },
         addEditedForm: function () {
-            editor.style.display = "none";
+            display(editor, "none");
             this.insertSeed(seed_textarea.value);
             return false;
         },
         cancelEdit: function () {
-            editor.style.display = "none";
+            display(editor, "none");
             //seed_textarea.value = patterns_menu.value;
             return false;
+        },
+        cancelInfo: function () {
+            display($("info"), "none");
         },
         shift: function (dir) {
             $("seeds").scrollTop += dir *  100;

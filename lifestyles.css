@@ -35,7 +35,8 @@ a:active, a.active, #seeds a:visited {
 	background: black;
     font-family: Courier, monospace;
 }
-.closeBtn {
+#edCloseBtn a,
+#infoCloseBtn a {
 	width:10px;
 	float:right;
 }

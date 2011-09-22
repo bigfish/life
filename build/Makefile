@@ -6,7 +6,7 @@ INCLUDE_STATIC_LIFEFORMS := false
 MIN_LIFESPAN := 100
 MAX_NUM_FORMS := 150
 
-all: loader_ugly.js lifestyles-min.css life_o.png patterns.js data.png data_o.png results verify
+all: loader_ugly.js lifestyles-min.css life_o.png patterns.js data.png data_o.png results verify copy zip
 .PHONY: all
 
 loader_ugly.js:	../loader.js
@@ -50,6 +50,19 @@ results:
 
 verify: txt2png.js
 	@node verify.js "patterns_filtered.js"
-	
+
+copy:
+	@rm -rf ./app/build
+	@rm life.zip
+	@mkdir app/build
+	@cp ../index-min.html app/index.html
+	#@cp lifestyles-min.css app/build/lifestyles-min.css
+	@cp bootstrap.js app/build/bootstrap.js
+	@cp life_o.png app/build/life_o.png
+	@cp data_o.png app/build/data_o.png
+	@cp metadata_o.png app/build/metadata_o.png
+
+zip:
+	@zip -r life.zip app
 
 
